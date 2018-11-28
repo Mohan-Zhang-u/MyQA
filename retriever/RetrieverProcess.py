@@ -1,4 +1,5 @@
 import argparse
+import json
 from subutils import tfidf_doc_ranker
 
 def process(tfidf_model_path, question, k):
@@ -11,5 +12,11 @@ if __name__ == "__main__":
     parser.add_argument('tfidf_model_path', type=str, help='/path/to/tfidf_model.npz')
     parser.add_argument('question', type=str, help='the quetion to be answered')
     parser.add_argument('k', type=int, default=5, help='the maximum number of documents to be retrieved')
+    parser.add_argument('retrieved_json_path', type=str, help='/path/to/retrieved_json.json')
     args = parser.parse_args()
-    process(args.tfidf_model_path, args.question, args.k)
+    doc_names, doc_scores = process(args.tfidf_model_path, args.question, args.k)
+    my_dict = {}
+    my_dict["doc_names"]=doc_names
+    my_dict["doc_scores"]=doc_scores.tolist()
+    with open(args.retrieved_json_path, 'w') as fp:
+        json.dump(my_dict, fp)

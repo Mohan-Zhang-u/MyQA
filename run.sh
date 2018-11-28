@@ -16,7 +16,7 @@ rm mydata/10wikiTFIDF/*
 python retriever/FromPureTextToJsons.py mydata/10wiki1 mydata/10wikijson
 python retriever/build_db.py mydata/10wikijson mydata/10wikiDataBase/db.db
 python retriever/build_tfidf.py mydata/10wikiDataBase/db.db mydata/10wikiTFIDF
-python retriever/RetrieverProcess.py mydata/10wikiTFIDF/db-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz "Neural Network" 3
+python retriever/RetrieverProcess.py mydata/10wikiTFIDF/db-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz "Neural Network" 5 mydata/retrieved.json
 
 
 
