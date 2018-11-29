@@ -15,11 +15,13 @@ mkdir -p MyRetrievedData/retrieved
 mkdir -p MyRetrievedData/DocToRead
 mkdir -p MyAnswers
 
+rm MyRetrievedData/retrieved/retrieved.json
+
 echo "Enter Your Questions:"
 read question
 # question="latent allocation"
 
-python retriever/RetrieverProcess.py MyRetrievedData/myTFIDF/SearchBase.npz "$question" 2 MyRetrievedData/retrieved/retrieved.json
+python retriever/RetrieverProcess.py MyRetrievedData/myTFIDF/SearchBase.npz "$question" 3 MyRetrievedData/retrieved/retrieved.json
 python retriever/Pipeline.py MyCorpus MyRetrievedData/retrieved/retrieved.json MyRetrievedData/DocToRead/DocToRead.json "$question"
 
 for d in $QES_JSON_DIR/*.json ;
@@ -44,3 +46,5 @@ do
   --output_dir=MyAnswers/
 
 done
+
+cat MyAnswers/predictions.json
