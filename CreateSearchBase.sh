@@ -19,10 +19,3 @@ python retriever/build_db.py MyRetrievedData/tmp/MyCorpusJson MyRetrievedData/tm
 python retriever/build_tfidf.py MyRetrievedData/tmp/MyCorpusDataBase/db.db MyRetrievedData/myTFIDF
 # clean data
 rm -rf MyRetrievedData/tmp
-
-
-
-
-mkdir -p MyRetrievedData/retrieved
-python retriever/RetrieverProcess.py MyRetrievedData/myTFIDF/SearchBase.npz "Neural Network" 5 MyRetrievedData/retrieved/retrieved.json
-

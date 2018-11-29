@@ -192,7 +192,7 @@ if __name__ == '__main__':
     basename = os.path.splitext(os.path.basename(args.db_path))[0]
     basename += ('-tfidf-ngram=%d-hash=%d-tokenizer=%s' %
                  (args.ngram, args.hash_size, args.tokenizer))
-    filename = os.path.join(args.out_dir, basename)
+    filename = os.path.join(args.out_dir, 'SearchBase')
 
     logger.info('Saving to %s.npz' % filename)
     metadata = {
