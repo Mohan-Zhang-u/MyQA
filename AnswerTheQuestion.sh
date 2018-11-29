@@ -21,7 +21,7 @@ echo "Enter Your Questions:"
 read question
 # question="latent allocation"
 
-python retriever/RetrieverProcess.py MyRetrievedData/myTFIDF/SearchBase.npz "$question" 3 MyRetrievedData/retrieved/retrieved.json
+python retriever/RetrieverProcess.py MyRetrievedData/myTFIDF/SearchBase.npz "$question" 5 MyRetrievedData/retrieved/retrieved.json
 python retriever/Pipeline.py MyCorpus MyRetrievedData/retrieved/retrieved.json MyRetrievedData/DocToRead/DocToRead.json "$question"
 
 for d in $QES_JSON_DIR/*.json ;
