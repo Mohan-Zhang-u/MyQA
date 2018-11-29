@@ -9,4 +9,7 @@ export CLASSPATH=$CLASSPATH:data/corenlp/*
 #change to args!
 
 mkdir -p MyRetrievedData/retrieved
-python retriever/RetrieverProcess.py MyRetrievedData/myTFIDF/SearchBase.npz "Neural Network" 5 MyRetrievedData/retrieved/retrieved.json
+
+echo "Enter Your Questions:"
+read question
+python retriever/RetrieverProcess.py MyRetrievedData/myTFIDF/SearchBase.npz "$question" 5 MyRetrievedData/retrieved/retrieved.json
