@@ -1,3 +1,4 @@
+import codecs
 import argparse
 import json
 from subutils import tfidf_doc_ranker
@@ -18,5 +19,5 @@ if __name__ == "__main__":
     my_dict = {}
     my_dict["doc_names"]=doc_names
     my_dict["doc_scores"]=doc_scores.tolist()
-    with open(args.retrieved_json_path, 'w') as fp:
+    with codecs.open(args.retrieved_json_path, 'w', encoding='utf-8') as fp:
         json.dump(my_dict, fp)

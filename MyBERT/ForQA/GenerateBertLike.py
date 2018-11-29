@@ -46,8 +46,8 @@ import codecs
 def get_paragraph(filename):
     with codecs.open('Paragraphs/'+filename, 'r',encoding='utf8') as fp:
         paragraph = fp.read()
-        paragraph = paragraph.replace('\r\n', ' ')
-        paragraph = paragraph.replace('\n', ' ')
+        paragraph = paragraph.replace('\r\n', '\n')
+        paragraph = paragraph.replace('\n', '\n')
         # paragraph.replace('\'', ' ')
         paragraph = paragraph.replace('\'', '\\\'')
         paragraph = paragraph.replace('\"', '\\\"')

@@ -8,20 +8,23 @@ export CLASSPATH=$CLASSPATH:data/corenlp/*
 
 # temp, export DIR=
 
-rm mydata/10wikijson/*
-rm mydata/10wikiDataBase/db.db
-rm mydata/10wikiTFIDF/*
+# prepare corpus to do QA. Here we prepared a search source.
+mkdir -p MyRetrievedData
+mkdir -p MyRetrievedData/tmp
+mkdir -p MyRetrievedData/tmp/MyCorpusJson
+mkdir -p MyRetrievedData/tmp/MyCorpusDataBase
+mkdir -p MyRetrievedData/myTFIDF
+python retriever/FromPureTextToJsons.py MyCorpus MyRetrievedData/tmp/MyCorpusJson
+python retriever/build_db.py MyRetrievedData/tmp/MyCorpusJson MyRetrievedData/tmp/MyCorpusDataBase/db.db
+python retriever/build_tfidf.py MyRetrievedData/tmp/MyCorpusDataBase/db.db MyRetrievedData/myTFIDF
+# clean data
+rm -rf MyRetrievedData/tmp
 
-# prepare corpus to do QA.
-python retriever/FromPureTextToJsons.py mydata/10wiki1 mydata/10wikijson
-python retriever/build_db.py mydata/10wikijson mydata/10wikiDataBase/db.db
-python retriever/build_tfidf.py mydata/10wikiDataBase/db.db mydata/10wikiTFIDF
 
 
 
-
-
-python retriever/RetrieverProcess.py mydata/10wikiTFIDF/db-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz "Neural Network" 5 mydata/retrieved.json
+mkdir -p MyRetrievedData/retrieved
+python retriever/RetrieverProcess.py MyRetrievedData/myTFIDF/db-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz "Neural Network" 5 MyRetrievedData/retrieved/retrieved.json
 
 
 

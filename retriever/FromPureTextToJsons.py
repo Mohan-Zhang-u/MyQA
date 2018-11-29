@@ -6,17 +6,18 @@
 '''
 
 import json
+import codecs
 import os
 import argparse
 
 def CreateJsonFile(datafile_path, json_path):
     for filename in os.listdir(datafile_path):
-        with open(datafile_path + '/' + filename, 'r', encoding='utf8') as fp:
+        with codecs.open(datafile_path + '/' + filename, 'r', encoding='utf8') as fp:
             text = fp.read()
             dictionary={}
             dictionary['id']=filename
             dictionary['text']=text
-            with open(json_path + '/' + filename, 'w') as fpw:
+            with codecs.open(json_path + '/' + filename, 'w', encoding='utf8') as fpw:
                 json.dump(dictionary, fpw)
 
 if __name__ == "__main__":
