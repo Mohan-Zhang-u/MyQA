@@ -10,6 +10,10 @@ export CLASSPATH=$CLASSPATH:data/corenlp/*
 
 mkdir -p MyRetrievedData/retrieved
 
-echo "Enter Your Questions:"
-read question
+# echo "Enter Your Questions:"
+# read question
+question="question answering"
+
 python retriever/RetrieverProcess.py MyRetrievedData/myTFIDF/SearchBase.npz "$question" 5 MyRetrievedData/retrieved/retrieved.json
+python retriever/Pipeline.py MyCorpus MyRetrievedData/retrieved/retrieved.json MyRetrievedData/retrieved/docToRead.json "$question"
+
