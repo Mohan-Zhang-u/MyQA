@@ -1,124 +1,124 @@
 {
-    "When is dota developed ?": [
+    "What is question answering ?": [
         {
-            "text": "2009",
-            "probability": 0.9639808470406876,
-            "start_logit": 4.225631237030029,
-            "end_logit": 4.995340824127197
+            "text": "how does an infant learn a specific and non-normal grammar",
+            "probability": 0.17474856322890542,
+            "start_logit": 8.197954177856445,
+            "end_logit": 6.29598331451416
         },
         {
-            "text": "in 2009",
-            "probability": 0.028438548481134845,
-            "start_logit": 0.7023053765296936,
-            "end_logit": 4.995340824127197
+            "text": "how does an infant learn a specific and non-normal grammar (Chomsky Normal Form) without learning an overgeneralized version and getting stuck",
+            "probability": 0.12238779744784346,
+            "start_logit": 8.197954177856445,
+            "end_logit": 5.9398298263549805
         },
         {
-            "text": "Development of Dota 2 began in 2009",
-            "probability": 0.004086180793074153,
-            "start_logit": -1.2378294467926025,
-            "end_logit": 4.995340824127197
+            "text": "describes the human language ability",
+            "probability": 0.0952826760139013,
+            "start_logit": 6.496519088745117,
+            "end_logit": 7.390918254852295
         },
         {
-            "text": "Dota 2 began in 2009",
-            "probability": 0.0020992924567166007,
-            "start_logit": -1.9038398265838623,
-            "end_logit": 4.995340824127197
+            "text": "human language ability",
+            "probability": 0.08054525327487567,
+            "start_logit": 6.328490257263184,
+            "end_logit": 7.390918254852295
         },
         {
-            "text": "began in 2009",
-            "probability": 0.0004973450539652577,
-            "start_logit": -3.3439114093780518,
-            "end_logit": 4.995340824127197
+            "text": "how does an infant learn a specific and non-normal grammar (Chomsky Normal Form)",
+            "probability": 0.07188579899910051,
+            "start_logit": 8.197954177856445,
+            "end_logit": 5.407713890075684
         },
         {
-            "text": "2009 when IceFrog, lead designer of the original Defense of the Ancients mod",
-            "probability": 0.0002204784299790514,
-            "start_logit": 4.225631237030029,
-            "end_logit": -3.387686014175415
+            "text": "building systems that automatically answer questions posed by humans in a natural language",
+            "probability": 0.05679109629030164,
+            "start_logit": 6.361913681030273,
+            "end_logit": 7.008055210113525
         },
         {
-            "text": "2009 when",
-            "probability": 0.00020102755595399917,
-            "start_logit": 4.225631237030029,
-            "end_logit": -3.480043888092041
+            "text": "describes the human language ability and may help to explain the distribution of linguistic data and behavior that we actually observe",
+            "probability": 0.04925015604527762,
+            "start_logit": 6.496519088745117,
+            "end_logit": 6.730982780456543
         },
         {
-            "text": "July 2013",
-            "probability": 0.00016215682549659648,
-            "start_logit": 0.2906792461872101,
-            "end_logit": 0.24003003537654877
+            "text": "end-to-end learning of a higher-level task",
+            "probability": 0.04787188247504968,
+            "start_logit": 5.720087051391602,
+            "end_logit": 7.479030609130859
         },
         {
-            "text": "2009 when IceFrog, lead designer of the original Defense of the Ancients mod, was hired by Valve",
-            "probability": 0.00014719094384656474,
-            "start_logit": 4.225631237030029,
-            "end_logit": -3.791755199432373
+            "text": "building systems",
+            "probability": 0.04348027370568292,
+            "start_logit": 6.361913681030273,
+            "end_logit": 6.740983009338379
         },
         {
-            "text": "2009 when IceFrog",
-            "probability": 8.814791852015568e-05,
-            "start_logit": 4.225631237030029,
-            "end_logit": -4.304469585418701
+            "text": "human language ability and may help to explain the distribution of linguistic data and behavior that we actually observe",
+            "probability": 0.04163260792460622,
+            "start_logit": 6.328490257263184,
+            "end_logit": 6.730982780456543
         },
         {
-            "text": "July 2013,",
-            "probability": 2.4771565265897282e-05,
-            "start_logit": 0.2906792461872101,
-            "end_logit": -1.638837456703186
+            "text": "computer science discipline within the fields of information retrieval and natural language processing (NLP), which is concerned with building systems",
+            "probability": 0.04141121390650183,
+            "start_logit": 6.31315803527832,
+            "end_logit": 6.740983009338379
         },
         {
-            "text": "2013",
-            "probability": 2.397055245958441e-05,
-            "start_logit": -1.6210585832595825,
-            "end_logit": 0.24003003537654877
+            "text": "an infant learn a specific and non-normal grammar (Chomsky Normal Form) without learning an overgeneralized version and getting stuck?",
+            "probability": 0.027519769878741957,
+            "start_logit": 5.679845809936523,
+            "end_logit": 6.965648174285889
         },
         {
-            "text": "in 2009 when IceFrog, lead designer of the original Defense of the Ancients mod",
-            "probability": 6.50436835882394e-06,
-            "start_logit": 0.7023053765296936,
-            "end_logit": -3.387686014175415
+            "text": "the human language ability",
+            "probability": 0.026471423368656676,
+            "start_logit": 5.2157368659973145,
+            "end_logit": 7.390918254852295
         },
         {
-            "text": "in 2009 when",
-            "probability": 5.930545107397298e-06,
-            "start_logit": 0.7023053765296936,
-            "end_logit": -3.480043888092041
+            "text": "Given a human-language question",
+            "probability": 0.024365649266806073,
+            "start_logit": 6.102725982666016,
+            "end_logit": 6.421037673950195
         },
         {
-            "text": "in 2009 when IceFrog, lead designer of the original Defense of the Ancients mod, was hired by Valve",
-            "probability": 4.342302863604354e-06,
-            "start_logit": 0.7023053765296936,
-            "end_logit": -3.791755199432373
+            "text": "automatically answer questions posed by humans in a natural language",
+            "probability": 0.018592292189889923,
+            "start_logit": 5.245281219482422,
+            "end_logit": 7.008055210113525
         },
         {
-            "text": "July",
-            "probability": 3.790550305977588e-06,
-            "start_logit": 0.2906792461872101,
-            "end_logit": -3.5160226821899414
+            "text": "higher-level task",
+            "probability": 0.018016727637207717,
+            "start_logit": 4.742859363555908,
+            "end_logit": 7.479030609130859
         },
         {
-            "text": "2013,",
-            "probability": 3.6618138206255952e-06,
-            "start_logit": -1.6210585832595825,
-            "end_logit": -1.638837456703186
+            "text": "end-to-end learning",
+            "probability": 0.01599593355188302,
+            "start_logit": 5.720087051391602,
+            "end_logit": 6.382836818695068
         },
         {
-            "text": "in 2009 when IceFrog",
-            "probability": 2.6004654159282947e-06,
-            "start_logit": 0.7023053765296936,
-            "end_logit": -4.304469585418701
+            "text": "a computer science discipline within the fields of information retrieval and natural language processing (NLP), which is concerned with building systems",
+            "probability": 0.0156396106800587,
+            "start_logit": 5.339413166046143,
+            "end_logit": 6.740983009338379
         },
         {
-            "text": "in July 2013",
-            "probability": 2.2777596146814218e-06,
-            "start_logit": -3.9746923446655273,
-            "end_logit": 0.24003003537654877
+            "text": "an infant learn a specific and non-normal grammar",
+            "probability": 0.014086822575577229,
+            "start_logit": 5.679845809936523,
+            "end_logit": 6.29598331451416
         },
         {
-            "text": "Development of Dota 2 began in 2009 when IceFrog, lead designer of the original Defense of the Ancients mod",
-            "probability": 9.345774126459574e-07,
-            "start_logit": -1.2378294467926025,
-            "end_logit": -3.387686014175415
+            "text": "a human-language question",
+            "probability": 0.014024451539132506,
+            "start_logit": 5.55035400390625,
+            "end_logit": 6.421037673950195
         }
     ]
 }

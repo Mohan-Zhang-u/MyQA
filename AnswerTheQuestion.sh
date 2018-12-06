@@ -19,6 +19,9 @@ rm MyRetrievedData/retrieved/retrieved.json
 
 echo "Enter Your Questions:"
 read question
+question=${question%\?*}
+question="$question ?"
+# echo $question
 # question="latent allocation"
 
 python retriever/RetrieverProcess.py MyRetrievedData/myTFIDF/SearchBase.npz "$question" 5 MyRetrievedData/retrieved/retrieved.json
