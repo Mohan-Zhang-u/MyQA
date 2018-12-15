@@ -26,4 +26,6 @@ pexpect==4.2.1
 - Build the databse for Document Retriever by run ./CreateSearchBase.sh
 - Run ./AnswerTheQuestion.sh, and ask any question about the corpus you want!
 It is super easy, is it?
- {% for further steps, we are aiming at fine-tuning on multiple choice and choose the best out of it. %}
+
+<!-- % for further steps, we are aiming at fine-tuning on multiple choice and choose the best out of it. % -->
+
