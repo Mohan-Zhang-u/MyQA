@@ -1,4 +1,3 @@
-### (still under developing)
 # MyQA
 
 - This repo is a question and answering system based on unlabeled large corpus. 
