@@ -1,6 +1,6 @@
 import json
 import codecs
-from typing import List, Self
+from typing import List, LiteralString
 
 # The structure looks like this:
 # SQuAD:https://rajpurkar.github.io/SQuAD-explorer/
@@ -22,7 +22,7 @@ from typing import List, Self
 # │       └── "title": "document id"
 # └── "version": 1.1
 
-def get_paragraph(filename: str) -> str:
+def get_paragraph(filename: LiteralString) -> str:
     try:
         with codecs.open('Paragraphs/' + filename, 'r', encoding='utf8') as fp:
             paragraph = fp.read()
@@ -36,7 +36,7 @@ def get_paragraph(filename: str) -> str:
         print(e)
         return ""
 
-def generate_multi_test_cases(list_of_paragraphs: List[str], list_of_questions: List[str], name_of_file: str) -> None:
+def generate_multi_test_cases(list_of_paragraphs: List[str], list_of_questions: List[str], name_of_file: LiteralString) -> None:
     assert len(list_of_paragraphs) == len(list_of_questions)
     length_of_them = len(list_of_paragraphs)
 
