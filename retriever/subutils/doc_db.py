@@ -9,28 +9,32 @@
 import sqlite3
 from . import utils
 from . import DEFAULTS
-from typing import TypeVar, Generic, List, Optional, Self
+from typing import TypeVar, Generic, List, Optional
 from typing_extensions import LiteralString
+from dataclasses import dataclass, field
 
 T = TypeVar('T')
 
+@dataclass
 class DocDB(Generic[T]):
     """Sqlite backed document storage.
 
     Implements get_doc_text(doc_id).
     """
+    path: Optional[str] = field(default=None)
+    connection: sqlite3.Connection = field(init=False)
 
-    def __init__(self, db_path: Optional[str] = None) -> None:
-        self.path = db_path or DEFAULTS['db_path']
+    def __post_init__(self) -> None:
+        self.path = self.path or DEFAULTS['db_path']
         self.connection = sqlite3.connect(self.path, check_same_thread=False)
 
-    def __enter__(self) -> Self:
+    def __enter__(self) -> 'DocDB':
         return self
 
     def __exit__(self, *args) -> None:
         self.close()
 
-    def path(self) -> str:
+    def get_path(self) -> str:
         """Return the path to the file that backs this database."""
         return self.path
 
