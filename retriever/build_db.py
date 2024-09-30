@@ -12,7 +12,7 @@ import json
 import os
 import logging
 import importlib.util
-from typing import TypeVar, Tuple, List, Self
+from typing import TypeVar, Tuple, List, LiteralString
 
 from multiprocessing import Pool as ProcessPool
 from tqdm import tqdm
@@ -31,12 +31,12 @@ logger.addHandler(console)
 
 PREPROCESS_FN = None
 
-def init(filename: str) -> None:
+def init(filename: LiteralString) -> None:
     global PREPROCESS_FN
     if filename:
         PREPROCESS_FN = import_module(filename).preprocess
 
-def import_module(filename: str):
+def import_module(filename: LiteralString):
     """Import a module given a full path to the file."""
     spec = importlib.util.spec_from_file_location('doc_filter', filename)
     module = importlib.util.module_from_spec(spec)
@@ -47,7 +47,7 @@ def import_module(filename: str):
 # Store corpus.
 # ------------------------------------------------------------------------------
 
-def iter_files(path: str) -> str:
+def iter_files(path: LiteralString) -> str:
     """Walk through all files located under a root path."""
     if os.path.isfile(path):
         yield path
@@ -60,7 +60,7 @@ def iter_files(path: str) -> str:
         error.add_note('Ensure the path is correct and accessible.')
         raise error
 
-def get_contents(filename: str) -> List[Tuple[str, str]]:
+def get_contents(filename: LiteralString) -> List[Tuple[str, str]]:
     """Parse the contents of a file. Each line is a JSON encoded document."""
     global PREPROCESS_FN
     documents = []
@@ -78,7 +78,7 @@ def get_contents(filename: str) -> List[Tuple[str, str]]:
             documents.append((utils.normalize(doc['id']), doc['text']))
     return documents
 
-def store_contents(data_path: str, save_path: str, preprocess: str, num_workers: int = None) -> None:
+def store_contents(data_path: LiteralString, save_path: LiteralString, preprocess: LiteralString, num_workers: int = None) -> None:
     """Preprocess and store a corpus of documents in sqlite.
 
     Args:
