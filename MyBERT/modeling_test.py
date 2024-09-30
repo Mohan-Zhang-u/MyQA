@@ -20,35 +20,37 @@ import collections
 import json
 import random
 import re
+from typing import TypeVar, Generic, List, Tuple, Dict, Any
 
 import modeling
 import six
 import tensorflow as tf
 
+Ts = TypeVar('Ts')
 
 class BertModelTest(tf.test.TestCase):
 
-    class BertModelTester(object):
+    class BertModelTester(Generic[Ts]):
 
         def __init__(self,
-                     parent,
-                     batch_size=13,
-                     seq_length=7,
-                     is_training=True,
-                     use_input_mask=True,
-                     use_token_type_ids=True,
-                     vocab_size=99,
-                     hidden_size=32,
-                     num_hidden_layers=5,
-                     num_attention_heads=4,
-                     intermediate_size=37,
-                     hidden_act="gelu",
-                     hidden_dropout_prob=0.1,
-                     attention_probs_dropout_prob=0.1,
-                     max_position_embeddings=512,
-                     type_vocab_size=16,
-                     initializer_range=0.02,
-                     scope=None):
+                     parent: 'BertModelTest',
+                     batch_size: int = 13,
+                     seq_length: int = 7,
+                     is_training: bool = True,
+                     use_input_mask: bool = True,
+                     use_token_type_ids: bool = True,
+                     vocab_size: int = 99,
+                     hidden_size: int = 32,
+                     num_hidden_layers: int = 5,
+                     num_attention_heads: int = 4,
+                     intermediate_size: int = 37,
+                     hidden_act: str = "gelu",
+                     hidden_dropout_prob: float = 0.1,
+                     attention_probs_dropout_prob: float = 0.1,
+                     max_position_embeddings: int = 512,
+                     type_vocab_size: int = 16,
+                     initializer_range: float = 0.02,
+                     scope: str = None):
             self.parent = parent
             self.batch_size = batch_size
             self.seq_length = seq_length
@@ -68,7 +70,7 @@ class BertModelTest(tf.test.TestCase):
             self.initializer_range = initializer_range
             self.scope = scope
 
-        def create_model(self):
+        def create_model(self) -> Dict[str, tf.Tensor]:
             input_ids = BertModelTest.ids_tensor([self.batch_size, self.seq_length],
                                                  self.vocab_size)
 
@@ -111,7 +113,7 @@ class BertModelTest(tf.test.TestCase):
             }
             return outputs
 
-        def check_output(self, result):
+        def check_output(self, result: Dict[str, tf.Tensor]) -> None:
             self.parent.assertAllEqual(
                 result["embedding_output"].shape,
                 [self.batch_size, self.seq_length, self.hidden_size])
@@ -123,16 +125,16 @@ class BertModelTest(tf.test.TestCase):
             self.parent.assertAllEqual(result["pooled_output"].shape,
                                        [self.batch_size, self.hidden_size])
 
-    def test_default(self):
+    def test_default(self) -> None:
         self.run_tester(BertModelTest.BertModelTester(self))
 
-    def test_config_to_json_string(self):
+    def test_config_to_json_string(self) -> None:
         config = modeling.BertConfig(vocab_size=99, hidden_size=37)
         obj = json.loads(config.to_json_string())
         self.assertEqual(obj["vocab_size"], 99)
         self.assertEqual(obj["hidden_size"], 37)
 
-    def run_tester(self, tester):
+    def run_tester(self, tester: 'BertModelTester') -> None:
         with self.test_session() as sess:
             ops = tester.create_model()
             init_op = tf.group(tf.global_variables_initializer(),
@@ -144,7 +146,7 @@ class BertModelTest(tf.test.TestCase):
             self.assert_all_tensors_reachable(sess, [init_op, ops])
 
     @classmethod
-    def ids_tensor(cls, shape, vocab_size, rng=None, name=None):
+    def ids_tensor(cls, shape: List[int], vocab_size: int, rng: random.Random = None, name: str = None) -> tf.Tensor:
         """Creates a random int32 tensor of the shape within the vocab size."""
         if rng is None:
             rng = random.Random()
@@ -159,7 +161,7 @@ class BertModelTest(tf.test.TestCase):
 
         return tf.constant(value=values, dtype=tf.int32, shape=shape, name=name)
 
-    def assert_all_tensors_reachable(self, sess, outputs):
+    def assert_all_tensors_reachable(self, sess: tf.Session, outputs: List[tf.Tensor]) -> None:
         """Checks that all the tensors in the graph are reachable from outputs."""
         graph = sess.graph
 
@@ -191,7 +193,7 @@ class BertModelTest(tf.test.TestCase):
             (" ".join([x.name for x in unreachable])))
 
     @classmethod
-    def get_unreachable_ops(cls, graph, outputs):
+    def get_unreachable_ops(cls, graph: tf.Graph, outputs: List[tf.Tensor]) -> List[tf.Operation]:
         """Finds all of the tensors in graph that are unreachable from outputs."""
         outputs = cls.flatten_recursive(outputs)
         output_to_op = collections.defaultdict(list)
@@ -254,7 +256,7 @@ class BertModelTest(tf.test.TestCase):
         return unreachable_ops
 
     @classmethod
-    def flatten_recursive(cls, item):
+    def flatten_recursive(cls, item: Any) -> List[Any]:
         """Flattens (potentially nested) a tuple/dictionary/list to a list."""
         output = []
         if isinstance(item, list):
