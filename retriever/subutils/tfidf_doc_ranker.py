@@ -12,6 +12,7 @@ import scipy.sparse as sp
 
 from multiprocessing.pool import ThreadPool
 from functools import partial
+from typing import Self
 
 from . import utils
 from . import tokenizers
@@ -43,15 +44,15 @@ class TfidfDocRanker(object):
         self.num_docs = len(self.doc_dict[0])
         self.strict = strict
 
-    def get_doc_index(self, doc_id):
+    def get_doc_index(self, doc_id) -> int:
         """Convert doc_id --> doc_index"""
         return self.doc_dict[0][doc_id]
 
-    def get_doc_id(self, doc_index):
+    def get_doc_id(self, doc_index) -> int:
         """Convert doc_index --> doc_id"""
         return self.doc_dict[1][doc_index]
 
-    def closest_docs(self, query, k=1):
+    def closest_docs(self, query, k=1) -> tuple[list[int], list[float]]:
         """Closest docs by dot product between query and documents
         in tfidf weighted word vector space.
         """
@@ -68,7 +69,7 @@ class TfidfDocRanker(object):
         doc_ids = [self.get_doc_id(i) for i in res.indices[o_sort]]
         return doc_ids, doc_scores
 
-    def batch_closest_docs(self, queries, k=1, num_workers=None):
+    def batch_closest_docs(self, queries, k=1, num_workers=None) -> list[tuple[list[int], list[float]]]:
         """Process a batch of closest_docs requests multithreaded.
         Note: we can use plain threads here as scipy is outside of the GIL.
         """
@@ -77,13 +78,13 @@ class TfidfDocRanker(object):
             results = threads.map(closest_docs, queries)
         return results
 
-    def parse(self, query):
+    def parse(self, query) -> list[str]:
         """Parse the query into tokens (either ngrams or tokens)."""
         tokens = self.tokenizer.tokenize(query)
         return tokens.ngrams(n=self.ngrams, uncased=True,
                              filter_fn=utils.filter_ngram)
 
-    def text2spvec(self, query):
+    def text2spvec(self, query) -> sp.csr_matrix:
         """Create a sparse tfidf-weighted word vector from query.
 
         tfidf = log(tf + 1) * log((N - Nt + 0.5) / (Nt + 0.5))
@@ -121,7 +122,7 @@ class TfidfDocRanker(object):
 
         return spvec
 
-    def handle_exceptions(self, exceptions):
+    def handle_exceptions(self, exceptions) -> None:
         """Handle multiple exceptions using exception groups."""
         try:
             # Example operation that might raise multiple exceptions
