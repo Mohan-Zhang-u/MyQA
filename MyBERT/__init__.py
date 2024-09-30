@@ -23,7 +23,9 @@ try:
     pass
 except* (ValueError, TypeError) as e:
     # handle ValueError and TypeError exceptions
+    e.add_note("Handling ValueError and TypeError exceptions.")
     pass
 except* Exception as e:
     # handle other exceptions
+    e.add_note("Handling other exceptions.")
     pass
