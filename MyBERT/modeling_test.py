@@ -20,7 +20,7 @@ import collections
 import json
 import random
 import re
-from typing import TypeVar, Generic, List, Tuple, Dict, Any, Self
+from typing import TypeVar, Generic, List, Tuple, Dict, Any, Self, LiteralString
 
 import modeling
 import six
@@ -44,13 +44,13 @@ class BertModelTest(tf.test.TestCase):
                      num_hidden_layers: int = 5,
                      num_attention_heads: int = 4,
                      intermediate_size: int = 37,
-                     hidden_act: str = "gelu",
+                     hidden_act: LiteralString = "gelu",
                      hidden_dropout_prob: float = 0.1,
                      attention_probs_dropout_prob: float = 0.1,
                      max_position_embeddings: int = 512,
                      type_vocab_size: int = 16,
                      initializer_range: float = 0.02,
-                     scope: str = None):
+                     scope: LiteralString = None):
             self.parent = parent
             self.batch_size = batch_size
             self.seq_length = seq_length
@@ -146,7 +146,7 @@ class BertModelTest(tf.test.TestCase):
             self.assert_all_tensors_reachable(sess, [init_op, ops])
 
     @classmethod
-    def ids_tensor(cls, shape: List[int], vocab_size: int, rng: random.Random = None, name: str = None) -> tf.Tensor:
+    def ids_tensor(cls, shape: List[int], vocab_size: int, rng: random.Random = None, name: LiteralString = None) -> tf.Tensor:
         """Creates a random int32 tensor of the shape within the vocab size."""
         if rng is None:
             rng = random.Random()
