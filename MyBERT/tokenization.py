@@ -22,7 +22,7 @@ import collections
 import unicodedata
 import six
 import tensorflow as tf
-from typing import List, Dict, Union, TypeVar, Generic
+from typing import List, Dict, Union, TypeVar, Generic, Self
 
 T = TypeVar('T')
 Ts = TypeVar('Ts')
