@@ -6,7 +6,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
-from typing import TypeVar, Callable, Any, Self
+from typing import TypeVar, Callable, Any, LiteralString
 
 DEFAULTS = {
     'corenlp_classpath': os.getenv('CLASSPATH')
@@ -30,7 +30,7 @@ except ImportError:
     pass
 
 
-def get_class(name: str) -> Callable[..., T]:
+def get_class(name: LiteralString) -> Callable[..., T]:
     if name == 'spacy':
         return SpacyTokenizer
     if name == 'corenlp':
