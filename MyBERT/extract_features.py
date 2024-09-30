@@ -320,7 +320,7 @@ def read_examples(input_file):
   """Read a list of `InputExample`s from an input file."""
   examples = []
   unique_id = 0
-  with tf.gfile.GFile(input_file, "r") as reader:
+  with tf.io.gfile.GFile(input_file, "r") as reader:
     while True:
       line = tokenization.convert_to_unicode(reader.readline())
       if not line:
@@ -341,7 +341,7 @@ def read_examples(input_file):
 
 
 def main(_):
-  tf.logging.set_verbosity(tf.logging.INFO)
+  tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.INFO)
 
   layer_indexes = [int(x) for x in FLAGS.layers.split(",")]
 
@@ -350,10 +350,10 @@ def main(_):
   tokenizer = tokenization.FullTokenizer(
       vocab_file=FLAGS.vocab_file, do_lower_case=FLAGS.do_lower_case)
 
-  is_per_host = tf.contrib.tpu.InputPipelineConfig.PER_HOST_V2
-  run_config = tf.contrib.tpu.RunConfig(
+  is_per_host = tf.compat.v1.estimator.tpu.InputPipelineConfig.PER_HOST_V2
+  run_config = tf.compat.v1.estimator.tpu.RunConfig(
       master=FLAGS.master,
-      tpu_config=tf.contrib.tpu.TPUConfig(
+      tpu_config=tf.compat.v1.estimator.tpu.TPUConfig(
           num_shards=FLAGS.num_tpu_cores,
           per_host_input_for_training=is_per_host))
 
@@ -375,7 +375,7 @@ def main(_):
 
   # If TPU is not available, this will fall back to normal Estimator on CPU
   # or GPU.
-  estimator = tf.contrib.tpu.TPUEstimator(
+  estimator = tf.compat.v1.estimator.tpu.TPUEstimator(
       use_tpu=FLAGS.use_tpu,
       model_fn=model_fn,
       config=run_config,
@@ -384,8 +384,8 @@ def main(_):
   input_fn = input_fn_builder(
       features=features, seq_length=FLAGS.max_seq_length)
 
-  with codecs.getwriter("utf-8")(tf.gfile.Open(FLAGS.output_file,
-                                               "w")) as writer:
+  with codecs.getwriter("utf-8")(tf.io.gfile.GFile(FLAGS.output_file,
+                                                   "w")) as writer:
     for result in estimator.predict(input_fn, yield_single_examples=True):
       unique_id = int(result["unique_id"])
       feature = unique_id_to_feature[unique_id]
@@ -416,4 +416,4 @@ if __name__ == "__main__":
   flags.mark_flag_as_required("bert_config_file")
   flags.mark_flag_as_required("init_checkpoint")
   flags.mark_flag_as_required("output_file")
-  tf.app.run()
+  tf.compat.v1.app.run()
