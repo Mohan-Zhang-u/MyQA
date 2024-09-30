@@ -191,7 +191,9 @@ def get_activation(activation_string):
     elif act == "tanh":
         return tf.tanh
     else:
-        raise ValueError(f"Unsupported activation: {act}")
+        raise ValueError(f"Unsupported activation: {act}").add_note(
+            f"Activation function '{activation_string}' is not supported. "
+            "Please use one of the supported activations: 'linear', 'relu', 'gelu', 'tanh'.")
 
 
 def get_assignment_map_from_checkpoint(tvars, init_checkpoint):
