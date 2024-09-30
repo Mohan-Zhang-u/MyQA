@@ -18,9 +18,9 @@ import os
 import sys
 import shutil
 import argparse
-import tempfile
 import urllib.request
 import zipfile
+from typing import List
 
 TASKS = ["CoLA", "SST", "MRPC", "QQP", "STS", "MNLI", "SNLI", "QNLI", "RTE", "WNLI", "diagnostic"]
 TASK2PATH = {"CoLA":'https://firebasestorage.googleapis.com/v0/b/mtl-sentence-representations.appspot.com/o/data%2FCoLA.zip?alt=media&token=46d5e637-3411-4188-bc44-5809b5bfb5f4',
@@ -38,7 +38,7 @@ TASK2PATH = {"CoLA":'https://firebasestorage.googleapis.com/v0/b/mtl-sentence-re
 MRPC_TRAIN = 'https://s3.amazonaws.com/senteval/senteval_data/msr_paraphrase_train.txt'
 MRPC_TEST = 'https://s3.amazonaws.com/senteval/senteval_data/msr_paraphrase_test.txt'
 
-def download_and_extract(task, data_dir):
+def download_and_extract(task: str, data_dir: str) -> None:
     print(f"Downloading and extracting {task}...")
     data_file = f"{task}.zip"
     urllib.request.urlretrieve(TASK2PATH[task], data_file)
@@ -47,7 +47,7 @@ def download_and_extract(task, data_dir):
     os.remove(data_file)
     print("\tCompleted!")
 
-def format_mrpc(data_dir, path_to_data):
+def format_mrpc(data_dir: str, path_to_data: str) -> None:
     print("Processing MRPC...")
     mrpc_dir = os.path.join(data_dir, "MRPC")
     if not os.path.isdir(mrpc_dir):
@@ -64,7 +64,7 @@ def format_mrpc(data_dir, path_to_data):
     assert os.path.isfile(mrpc_test_file), f"Test data not found at {mrpc_test_file}"
     urllib.request.urlretrieve(TASK2PATH["MRPC"], os.path.join(mrpc_dir, "dev_ids.tsv"))
 
-    dev_ids = []
+    dev_ids: List[List[str]] = []
     with open(os.path.join(mrpc_dir, "dev_ids.tsv")) as ids_fh:
         for row in ids_fh:
             dev_ids.append(row.strip().split('\t'))
@@ -91,7 +91,7 @@ def format_mrpc(data_dir, path_to_data):
             test_fh.write(f"{idx}\t{id1}\t{id2}\t{s1}\t{s2}\n")
     print("\tCompleted!")
 
-def download_diagnostic(data_dir):
+def download_diagnostic(data_dir: str) -> None:
     print("Downloading and extracting diagnostic...")
     if not os.path.isdir(os.path.join(data_dir, "diagnostic")):
         os.mkdir(os.path.join(data_dir, "diagnostic"))
@@ -100,7 +100,7 @@ def download_diagnostic(data_dir):
     print("\tCompleted!")
     return
 
-def get_tasks(task_names):
+def get_tasks(task_names: str) -> List[str]:
     task_names = task_names.split(',')
     if "all" in task_names:
         tasks = TASKS
@@ -111,7 +111,7 @@ def get_tasks(task_names):
             tasks.append(task_name)
     return tasks
 
-def main(arguments):
+def main(arguments: List[str]) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_dir', help='directory to save data to', type=str, default='glue_data')
     parser.add_argument('--tasks', help='tasks to download data for as a comma separated string',
@@ -131,6 +131,7 @@ def main(arguments):
             download_diagnostic(args.data_dir)
         else:
             download_and_extract(task, args.data_dir)
+    return 0
 
 if __name__ == '__main__':
     try:
