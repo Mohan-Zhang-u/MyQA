@@ -12,6 +12,7 @@ import json
 import os
 import logging
 import importlib.util
+from typing import TypeVar, Tuple, List
 
 from multiprocessing import Pool as ProcessPool
 from tqdm import tqdm
@@ -24,35 +25,29 @@ console = logging.StreamHandler()
 console.setFormatter(fmt)
 logger.addHandler(console)
 
-
 # ------------------------------------------------------------------------------
 # Import helper
 # ------------------------------------------------------------------------------
 
-
 PREPROCESS_FN = None
 
-
-def init(filename):
+def init(filename: str) -> None:
     global PREPROCESS_FN
     if filename:
         PREPROCESS_FN = import_module(filename).preprocess
 
-
-def import_module(filename):
+def import_module(filename: str):
     """Import a module given a full path to the file."""
     spec = importlib.util.spec_from_file_location('doc_filter', filename)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
 
-
 # ------------------------------------------------------------------------------
 # Store corpus.
 # ------------------------------------------------------------------------------
 
-
-def iter_files(path):
+def iter_files(path: str) -> str:
     """Walk through all files located under a root path."""
     if os.path.isfile(path):
         yield path
@@ -65,8 +60,7 @@ def iter_files(path):
         error.add_note('Ensure the path is correct and accessible.')
         raise error
 
-
-def get_contents(filename):
+def get_contents(filename: str) -> List[Tuple[str, str]]:
     """Parse the contents of a file. Each line is a JSON encoded document."""
     global PREPROCESS_FN
     documents = []
@@ -84,8 +78,7 @@ def get_contents(filename):
             documents.append((utils.normalize(doc['id']), doc['text']))
     return documents
 
-
-def store_contents(data_path, save_path, preprocess, num_workers=None):
+def store_contents(data_path: str, save_path: str, preprocess: str, num_workers: int = None) -> None:
     """Preprocess and store a corpus of documents in sqlite.
 
     Args:
@@ -119,11 +112,9 @@ def store_contents(data_path, save_path, preprocess, num_workers=None):
     conn.commit()
     conn.close()
 
-
 # ------------------------------------------------------------------------------
 # Main.
 # ------------------------------------------------------------------------------
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
