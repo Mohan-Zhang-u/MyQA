@@ -18,11 +18,14 @@ import tempfile
 
 import tokenization
 import tensorflow as tf
+from typing import TypeVar
+
+Self = TypeVar('Self', bound='TokenizationTest')
 
 
 class TokenizationTest(tf.test.TestCase):
 
-    def test_full_tokenizer(self):
+    def test_full_tokenizer(self: Self) -> None:
         vocab_tokens = [
             "[UNK]", "[CLS]", "[SEP]", "want", "##want", "##ed", "wa", "un", "runn",
             "##ing", ","
@@ -41,14 +44,14 @@ class TokenizationTest(tf.test.TestCase):
         self.assertAllEqual(
             tokenizer.convert_tokens_to_ids(tokens), [7, 4, 5, 10, 8, 9])
 
-    def test_chinese(self):
+    def test_chinese(self: Self) -> None:
         tokenizer = tokenization.BasicTokenizer()
 
         self.assertAllEqual(
             tokenizer.tokenize("ah\u535A\u63A8zz"),
             ["ah", "\u535A", "\u63A8", "zz"])
 
-    def test_basic_tokenizer_lower(self):
+    def test_basic_tokenizer_lower(self: Self) -> None:
         tokenizer = tokenization.BasicTokenizer(do_lower_case=True)
 
         self.assertAllEqual(
@@ -56,14 +59,14 @@ class TokenizationTest(tf.test.TestCase):
             ["hello", "!", "how", "are", "you", "?"])
         self.assertAllEqual(tokenizer.tokenize("H\u00E9llo"), ["hello"])
 
-    def test_basic_tokenizer_no_lower(self):
+    def test_basic_tokenizer_no_lower(self: Self) -> None:
         tokenizer = tokenization.BasicTokenizer(do_lower_case=False)
 
         self.assertAllEqual(
             tokenizer.tokenize(" \tHeLLo!how  \n Are yoU?  "),
             ["HeLLo", "!", "how", "Are", "yoU", "?"])
 
-    def test_wordpiece_tokenizer(self):
+    def test_wordpiece_tokenizer(self: Self) -> None:
         vocab_tokens = [
             "[UNK]", "[CLS]", "[SEP]", "want", "##want", "##ed", "wa", "un", "runn",
             "##ing"
@@ -83,7 +86,7 @@ class TokenizationTest(tf.test.TestCase):
         self.assertAllEqual(
             tokenizer.tokenize("unwantedX running"), ["[UNK]", "runn", "##ing"])
 
-    def test_convert_tokens_to_ids(self):
+    def test_convert_tokens_to_ids(self: Self) -> None:
         vocab_tokens = [
             "[UNK]", "[CLS]", "[SEP]", "want", "##want", "##ed", "wa", "un", "runn",
             "##ing"
@@ -97,7 +100,7 @@ class TokenizationTest(tf.test.TestCase):
             tokenization.convert_tokens_to_ids(
                 vocab, ["un", "##want", "##ed", "runn", "##ing"]), [7, 4, 5, 8, 9])
 
-    def test_is_whitespace(self):
+    def test_is_whitespace(self: Self) -> None:
         self.assertTrue(tokenization._is_whitespace(" "))
         self.assertTrue(tokenization._is_whitespace("\t"))
         self.assertTrue(tokenization._is_whitespace("\r"))
@@ -107,7 +110,7 @@ class TokenizationTest(tf.test.TestCase):
         self.assertFalse(tokenization._is_whitespace("A"))
         self.assertFalse(tokenization._is_whitespace("-"))
 
-    def test_is_control(self):
+    def test_is_control(self: Self) -> None:
         self.assertTrue(tokenization._is_control("\u0005"))
 
         self.assertFalse(tokenization._is_control("A"))
@@ -115,7 +118,7 @@ class TokenizationTest(tf.test.TestCase):
         self.assertFalse(tokenization._is_control("\t"))
         self.assertFalse(tokenization._is_control("\r"))
 
-    def test_is_punctuation(self):
+    def test_is_punctuation(self: Self) -> None:
         self.assertTrue(tokenization._is_punctuation("-"))
         self.assertTrue(tokenization._is_punctuation("$"))
         self.assertTrue(tokenization._is_punctuation("`"))
