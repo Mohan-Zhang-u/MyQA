@@ -2,7 +2,7 @@ import json
 import codecs
 import os
 import argparse
-from typing import List, Dict, Any, TypedDict, NotRequired
+from typing import List, Dict, Any, TypedDict, NotRequired, Self
 
 # The structure looks like this:
 # SQuAD:https://rajpurkar.github.io/SQuAD-explorer/
