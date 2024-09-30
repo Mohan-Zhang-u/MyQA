@@ -55,3 +55,11 @@ class SimpleTokenizer(Tokenizer):
                 span,
             ))
         return Tokens(data, self.annotators)
+
+    # Example of handling multiple exceptions using exception groups
+    def example_method(self):
+        try:
+            # Some code that might raise multiple exceptions
+            pass
+        except* (ValueError, TypeError) as e:
+            logger.error("Caught an exception group: %s", e)
