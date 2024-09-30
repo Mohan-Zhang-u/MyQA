@@ -61,7 +61,7 @@ def iter_files(path):
             for f in filenames:
                 yield os.path.join(dirpath, f)
     else:
-        raise RuntimeError('Path %s is invalid' % path)
+        raise RuntimeError(f'Path {path} is invalid')
 
 
 def get_contents(filename):
@@ -95,7 +95,7 @@ def store_contents(data_path, save_path, preprocess, num_workers=None):
         num_workers: Number of parallel processes to use when reading docs.
     """
     if os.path.isfile(save_path):
-        raise RuntimeError('%s already exists! Not overwriting.' % save_path)
+        raise RuntimeError(f'{save_path} already exists! Not overwriting.')
 
     logger.info('Reading into database...')
     conn = sqlite3.connect(save_path)
@@ -110,7 +110,7 @@ def store_contents(data_path, save_path, preprocess, num_workers=None):
             count += len(pairs)
             c.executemany("INSERT INTO documents VALUES (?,?)", pairs)
             pbar.update()
-    logger.info('Read %d docs.' % count)
+    logger.info(f'Read {count} docs.')
     logger.info('Committing...')
     conn.commit()
     conn.close()
