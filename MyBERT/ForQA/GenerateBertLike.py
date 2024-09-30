@@ -44,7 +44,7 @@ import codecs
 
 
 def get_paragraph(filename):
-    with codecs.open('Paragraphs/'+filename, 'r',encoding='utf8') as fp:
+    with codecs.open('Paragraphs/'+filename, 'r', encoding='utf8') as fp:
         paragraph = fp.read()
         paragraph = paragraph.replace('\r\n', '\n')
         paragraph = paragraph.replace('\n', '\n')
@@ -77,17 +77,17 @@ def generate_multi_test_cases(list_of_paragraphs, list_of_questions, name_of_fil
     answer_start = -1
     text = ""
 
-    jsondict={}
-    jsondict["data"]=data
-    jsondict["version"]=version
+    jsondict = {}
+    jsondict["data"] = data
+    jsondict["version"] = version
 
     for j in range(length_of_them):
         new_paragraph = {}
-        new_paragraph["context"]=list_of_paragraphs[j]
-        new_paragraph["qas"]=[{"answers": [{"answer_start": -1, "text": ""}], "question":list_of_questions[j], "id":list_of_questions[j]}]
-        data.append({"title": "", "paragraphs":[new_paragraph]}) # here we can have multiple paragraph in paragraphs
+        new_paragraph["context"] = list_of_paragraphs[j]
+        new_paragraph["qas"] = [{"answers": [{"answer_start": -1, "text": ""}], "question": list_of_questions[j], "id": list_of_questions[j]}]
+        data.append({"title": "", "paragraphs": [new_paragraph]})  # here we can have multiple paragraph in paragraphs
 
-    with open('Data/'+name_of_file+'.json', 'w') as fp:
+    with open('Data/' + name_of_file + '.json', 'w') as fp:
         json.dump(jsondict, fp)
 
 
@@ -106,15 +106,14 @@ if __name__ == "__main__":
     # list_of_questions.append("How many teams are there in one game of Dota 2?")
     # list_of_paragraphs.append(get_paragraph("dota2.txt"))
     # list_of_questions.append("How can a team win a game of Dota 2?")
-    list_of_paragraphs=[]
-    list_of_questions=[]
+    list_of_paragraphs = []
+    list_of_questions = []
     list_of_paragraphs.append(get_paragraph("imperial_short.txt"))
     list_of_questions.append("Imperial's income is growing or decreasing?")
     list_of_paragraphs.append(get_paragraph("imperial_short.txt"))
     list_of_questions.append("How many barrels of petroleum product does Imperial sale each day during its highest quarterly sales?")
     list_of_paragraphs.append(get_paragraph("imperial_short.txt"))
     list_of_questions.append("How many barrels of Refinery throughput does Imperial sale per day during its highest quarterly sales?")
-
 
     generate_multi_test_cases(list_of_paragraphs, list_of_questions, "imperial_short")
 
@@ -150,5 +149,3 @@ if __name__ == "__main__":
     list_of_questions.append("From when do people start to consuming honey?")
 
     generate_multi_test_cases(list_of_paragraphs, list_of_questions, "bee")
-
-
