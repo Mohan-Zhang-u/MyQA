@@ -20,7 +20,7 @@ from __future__ import print_function
 
 import re
 import tensorflow as tf
-from typing import TypeVar, Generic, List, Tuple, Self
+from typing import TypeVar, Generic, List, Tuple, Self, LiteralString
 
 Ts = TypeVar('Ts')
 
@@ -92,8 +92,8 @@ class AdamWeightDecayOptimizer(tf.compat.v1.train.Optimizer, Generic[Ts]):
                  beta_1: float = 0.9,
                  beta_2: float = 0.999,
                  epsilon: float = 1e-6,
-                 exclude_from_weight_decay: List[str] = None,
-                 name: str = "AdamWeightDecayOptimizer"):
+                 exclude_from_weight_decay: List[LiteralString] = None,
+                 name: LiteralString = "AdamWeightDecayOptimizer"):
         """Constructs a AdamWeightDecayOptimizer."""
         super(AdamWeightDecayOptimizer, self).__init__(False, name)
 
@@ -104,7 +104,7 @@ class AdamWeightDecayOptimizer(tf.compat.v1.train.Optimizer, Generic[Ts]):
         self.epsilon = epsilon
         self.exclude_from_weight_decay = exclude_from_weight_decay
 
-    def apply_gradients(self, grads_and_vars: List[Tuple[tf.Tensor, tf.Variable]], global_step: tf.Variable = None, name: str = None) -> tf.Operation:
+    def apply_gradients(self, grads_and_vars: List[Tuple[tf.Tensor, tf.Variable]], global_step: tf.Variable = None, name: LiteralString = None) -> tf.Operation:
         """See base class."""
         assignments = []
         for (grad, param) in grads_and_vars:
