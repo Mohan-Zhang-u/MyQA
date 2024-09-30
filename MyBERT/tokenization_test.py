@@ -18,7 +18,7 @@ import tempfile
 
 import tokenization
 import tensorflow as tf
-from typing import TypeVar, LiteralString
+from typing import TypeVar
 
 Self = TypeVar('Self', bound='TokenizationTest')
 
