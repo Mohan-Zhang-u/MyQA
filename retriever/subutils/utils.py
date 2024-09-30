@@ -11,7 +11,7 @@ import unicodedata
 import numpy as np
 import scipy.sparse as sp
 from sklearn.utils import murmurhash3_32
-from typing import TypeVar, List, Tuple, Optional
+from typing import TypeVar, List, Tuple, Optional, Self
 
 # Define a variadic generic type variable
 Ts = TypeVar('Ts')
