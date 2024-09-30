@@ -440,5 +440,6 @@ if __name__ == "__main__":
   flags.mark_flag_as_required("vocab_file")
   try:
     tf.compat.v1.app.run()
-  except* Exception as e:
-    print(f"An error occurred: {e}")
+  except Exception as e:
+    e.add_note("An error occurred during the execution of the script.")
+    raise
