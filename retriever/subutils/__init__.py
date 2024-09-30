@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import os
-DATA_DIR='mydata'
+DATA_DIR = 'mydata'
 
 DEFAULTS = {
     'db_path': os.path.join(DATA_DIR, 'wikipedia/docs.db'),
