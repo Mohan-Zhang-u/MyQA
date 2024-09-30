@@ -73,7 +73,7 @@ def count(ngram, hash_size, doc_id):
         n=ngram, uncased=True, filter_fn=retriever.utils.filter_ngram
     )
 
-    # Hash ngrams and count occurences
+    # Hash ngrams and count occurrences
     counts = Counter([retriever.utils.hash(gram, hash_size) for gram in ngrams])
 
     # Return in sparse matrix data format.
@@ -137,7 +137,7 @@ def get_tfidf_matrix(cnts):
     tfidf = log(tf + 1) * log((N - Nt + 0.5) / (Nt + 0.5))
     * tf = term frequency in document
     * N = number of documents
-    * Nt = number of occurences of term in all documents
+    * Nt = number of occurrences of term in all documents
     """
     Ns = get_doc_freqs(cnts)
     idfs = np.log((cnts.shape[1] - Ns + 0.5) / (Ns + 0.5))
