@@ -27,7 +27,7 @@ import modeling
 import tokenization
 import tensorflow as tf
 
-flags = tf.flags
+flags = tf.compat.v1.flags
 
 FLAGS = flags.FLAGS
 
@@ -183,12 +183,12 @@ def model_fn_builder(bert_config, init_checkpoint, layer_indexes, use_tpu,
     else:
       tf.train.init_from_checkpoint(init_checkpoint, assignment_map)
 
-    tf.logging.info("**** Trainable Variables ****")
+    tf.compat.v1.logging.info("**** Trainable Variables ****")
     for var in tvars:
       init_string = ""
       if var.name in initialized_variable_names:
         init_string = ", *INIT_FROM_CKPT*"
-      tf.logging.info("  name = %s, shape = %s%s", var.name, var.shape,
+      tf.compat.v1.logging.info("  name = %s, shape = %s%s", var.name, var.shape,
                       init_string)
 
     all_layers = model.get_all_encoder_layers()
@@ -200,7 +200,7 @@ def model_fn_builder(bert_config, init_checkpoint, layer_indexes, use_tpu,
     for (i, layer_index) in enumerate(layer_indexes):
       predictions["layer_output_%d" % i] = all_layers[layer_index]
 
-    output_spec = tf.contrib.tpu.TPUEstimatorSpec(
+    output_spec = tf.compat.v1.estimator.tpu.TPUEstimatorSpec(
         mode=mode, predictions=predictions, scaffold_fn=scaffold_fn)
     return output_spec
 
@@ -280,13 +280,13 @@ def convert_examples_to_features(examples, seq_length, tokenizer):
     assert len(input_type_ids) == seq_length
 
     if ex_index < 5:
-      tf.logging.info("*** Example ***")
-      tf.logging.info("unique_id: %s" % (example.unique_id))
-      tf.logging.info("tokens: %s" % " ".join(
+      tf.compat.v1.logging.info("*** Example ***")
+      tf.compat.v1.logging.info("unique_id: %s" % (example.unique_id))
+      tf.compat.v1.logging.info("tokens: %s" % " ".join(
           [tokenization.printable_text(x) for x in tokens]))
-      tf.logging.info("input_ids: %s" % " ".join([str(x) for x in input_ids]))
-      tf.logging.info("input_mask: %s" % " ".join([str(x) for x in input_mask]))
-      tf.logging.info(
+      tf.compat.v1.logging.info("input_ids: %s" % " ".join([str(x) for x in input_ids]))
+      tf.compat.v1.logging.info("input_mask: %s" % " ".join([str(x) for x in input_mask]))
+      tf.compat.v1.logging.info(
           "input_type_ids: %s" % " ".join([str(x) for x in input_type_ids]))
 
     features.append(
