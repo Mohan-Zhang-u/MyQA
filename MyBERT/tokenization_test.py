@@ -126,4 +126,8 @@ class TokenizationTest(tf.test.TestCase):
 
 
 if __name__ == "__main__":
-    tf.test.main()
+    try:
+        tf.test.main()
+    except Exception as e:
+        e.add_note("An error occurred while running the tests.")
+        raise
