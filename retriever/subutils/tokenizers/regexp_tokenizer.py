@@ -62,7 +62,12 @@ class RegexpTokenizer(Tokenizer):
 
     def tokenize(self, text):
         data = []
-        matches = [m for m in self._regexp.finditer(text)]
+        try:
+            matches = [m for m in self._regexp.finditer(text)]
+        except Exception as e:
+            e.add_note("Error occurred while finding matches in the text.")
+            raise
+
         for i in range(len(matches)):
             # Get text
             token = matches[i].group()
