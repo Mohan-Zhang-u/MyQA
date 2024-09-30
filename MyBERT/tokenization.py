@@ -31,7 +31,9 @@ def convert_to_unicode(text):
     elif isinstance(text, bytes):
         return text.decode("utf-8", "ignore")
     else:
-        raise ValueError("Unsupported string type: %s" % (type(text)))
+        exc = ValueError("Unsupported string type: %s" % (type(text)))
+        exc.add_note("Ensure the input is either a string or bytes.")
+        raise exc
 
 
 def printable_text(text):
@@ -41,7 +43,9 @@ def printable_text(text):
     elif isinstance(text, bytes):
         return text.decode("utf-8", "ignore")
     else:
-        raise ValueError("Unsupported string type: %s" % (type(text)))
+        exc = ValueError("Unsupported string type: %s" % (type(text)))
+        exc.add_note("Ensure the input is either a string or bytes.")
+        raise exc
 
 
 def load_vocab(vocab_file):
