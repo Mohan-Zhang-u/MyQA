@@ -1,4 +1,5 @@
 # MyQA
+This project requires Python 3.11 or later.
 
 - This repo is a question and answering system based on unlabeled large corpus. 
 - The model has twocomponents: Document Retriever and Answer Extractor. 
@@ -7,7 +8,7 @@
 - BERT large uncased pretrained weights are used here (340m parameteres, 1.2g to load, requires more than 24G of GPU memory)
 # installation
 - All the pretrained weights can be found in this url:https://drive.google.com/open?id=1o28REZy5FfSlr1DRSy89viWyrnv-yAII
-- Python packages: 
+- Python 3.11 or later
 tensorflow >= 1.11.0 
 numpy
 scikit-learn
@@ -27,4 +28,3 @@ pexpect==4.2.1
 It is super easy, is it?
 
 <!-- % for further steps, we are aiming at fine-tuning on multiple choice and choose the best out of it. % -->
-
