@@ -11,7 +11,6 @@ DEFAULTS = {
     ),
 }
 
-
 def set_default(key, value):
     global DEFAULTS
     DEFAULTS[key] = value
@@ -21,8 +20,7 @@ def get_class(name):
         return TfidfDocRanker
     if name == 'sqlite':
         return DocDB
-    raise RuntimeError('Invalid retriever class: %s' % name)
-
+    raise RuntimeError(f'Invalid retriever class: {name}')
 
 from .doc_db import DocDB
 from .tfidf_doc_ranker import TfidfDocRanker
