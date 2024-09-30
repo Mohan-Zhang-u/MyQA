@@ -33,7 +33,7 @@ class SimpleTokenizer(Tokenizer):
                            (type(self).__name__, kwargs.get('annotators')))
         self.annotators = set()
 
-    def tokenize(self, text):
+    def tokenize(self, text: str) -> Tokens:
         data = []
         matches = [m for m in self._regexp.finditer(text)]
         for i in range(len(matches)):
