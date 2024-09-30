@@ -410,11 +410,19 @@ def main(_):
 
   bert_config = modeling.BertConfig.from_json_file(FLAGS.bert_config_file)
 
-  tf.gfile.MakeDirs(FLAGS.output_dir)
+  try:
+    tf.gfile.MakeDirs(FLAGS.output_dir)
+  except Exception as e:
+    e.add_note("Failed to create output directory: {}".format(FLAGS.output_dir))
+    raise
 
   input_files = []
   for input_pattern in FLAGS.input_file.split(","):
-    input_files.extend(tf.gfile.Glob(input_pattern))
+    try:
+      input_files.extend(tf.gfile.Glob(input_pattern))
+    except Exception as e:
+      e.add_note("Failed to process input pattern: {}".format(input_pattern))
+      raise
 
   tf.logging.info("*** Input Files ***")
   for input_file in input_files:
@@ -478,11 +486,15 @@ def main(_):
         input_fn=eval_input_fn, steps=FLAGS.max_eval_steps)
 
     output_eval_file = os.path.join(FLAGS.output_dir, "eval_results.txt")
-    with tf.gfile.GFile(output_eval_file, "w") as writer:
-      tf.logging.info("***** Eval results *****")
-      for key in sorted(result.keys()):
-        tf.logging.info("  %s = %s", key, str(result[key]))
-        writer.write("%s = %s\n" % (key, str(result[key])))
+    try:
+      with tf.gfile.GFile(output_eval_file, "w") as writer:
+        tf.logging.info("***** Eval results *****")
+        for key in sorted(result.keys()):
+          tf.logging.info("  %s = %s", key, str(result[key]))
+          writer.write("%s = %s\n" % (key, str(result[key])))
+    except Exception as e:
+      e.add_note("Failed to write evaluation results to file: {}".format(output_eval_file))
+      raise
 
 
 if __name__ == "__main__":
