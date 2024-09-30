@@ -22,13 +22,17 @@ import codecs
 # └── "version": 1.1
 
 def get_paragraph(filename):
-    with codecs.open('Paragraphs/' + filename, 'r', encoding='utf8') as fp:
-        paragraph = fp.read()
-        paragraph = paragraph.replace('\r\n', '\n')
-        paragraph = paragraph.replace('\n', '\n')
-        paragraph = paragraph.replace('\'', '\\\'')
-        paragraph = paragraph.replace('\"', '\\\"')
-        return paragraph
+    try:
+        with codecs.open('Paragraphs/' + filename, 'r', encoding='utf8') as fp:
+            paragraph = fp.read()
+            paragraph = paragraph.replace('\r\n', '\n')
+            paragraph = paragraph.replace('\n', '\n')
+            paragraph = paragraph.replace('\'', '\\\'')
+            paragraph = paragraph.replace('\"', '\\\"')
+            return paragraph
+    except* (FileNotFoundError, IOError) as e:
+        print(f"Error reading file {filename}: {e}")
+        return ""
 
 def generate_multi_test_cases(list_of_paragraphs, list_of_questions, name_of_file):
     assert len(list_of_paragraphs) == len(list_of_questions)
@@ -47,8 +51,11 @@ def generate_multi_test_cases(list_of_paragraphs, list_of_questions, name_of_fil
         new_paragraph["qas"] = [{"answers": [{"answer_start": -1, "text": ""}], "question": list_of_questions[j], "id": list_of_questions[j]}]
         data.append({"title": "", "paragraphs": [new_paragraph]})
 
-    with open('Data/' + name_of_file + '.json', 'w', encoding='utf8') as fp:
-        json.dump(jsondict, fp, ensure_ascii=False, indent=4)
+    try:
+        with open('Data/' + name_of_file + '.json', 'w', encoding='utf8') as fp:
+            json.dump(jsondict, fp, ensure_ascii=False, indent=4)
+    except* (FileNotFoundError, IOError) as e:
+        print(f"Error writing file {name_of_file}.json: {e}")
 
 if __name__ == "__main__":
     list_of_paragraphs = []
