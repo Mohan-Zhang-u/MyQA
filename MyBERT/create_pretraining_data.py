@@ -20,7 +20,7 @@ from __future__ import print_function
 
 import collections
 import random
-from typing import List, Tuple, Dict, Any
+from typing import List, Tuple, Dict, Any, TypeVar
 
 import tokenization
 import tensorflow as tf
@@ -62,6 +62,7 @@ flags.DEFINE_float(
     "Probability of creating sequences which are shorter than the "
     "maximum length.")
 
+Self = TypeVar('Self', bound='TrainingInstance')
 
 class TrainingInstance:
     """A single training instance (sentence pair)."""
@@ -89,6 +90,11 @@ class TrainingInstance:
 
     def __repr__(self) -> str:
         return self.__str__()
+
+    @classmethod
+    def from_tokens(cls: Self, tokens: List[str], segment_ids: List[int], masked_lm_positions: List[int], masked_lm_labels: List[str],
+                    is_random_next: bool) -> Self:
+        return cls(tokens, segment_ids, masked_lm_positions, masked_lm_labels, is_random_next)
 
 
 def write_instance_to_example_files(instances: List[TrainingInstance], tokenizer: Any, max_seq_length: int,
