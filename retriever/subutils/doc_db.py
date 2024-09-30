@@ -9,33 +9,35 @@
 import sqlite3
 from . import utils
 from . import DEFAULTS
+from typing import TypeVar, Generic, List, Optional
 
+T = TypeVar('T')
 
-class DocDB(object):
+class DocDB(Generic[T]):
     """Sqlite backed document storage.
 
     Implements get_doc_text(doc_id).
     """
 
-    def __init__(self, db_path=None):
+    def __init__(self, db_path: Optional[str] = None) -> None:
         self.path = db_path or DEFAULTS['db_path']
         self.connection = sqlite3.connect(self.path, check_same_thread=False)
 
-    def __enter__(self):
+    def __enter__(self) -> 'DocDB':
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args) -> None:
         self.close()
 
-    def path(self):
+    def path(self) -> str:
         """Return the path to the file that backs this database."""
         return self.path
 
-    def close(self):
+    def close(self) -> None:
         """Close the connection to the database."""
         self.connection.close()
 
-    def get_doc_ids(self):
+    def get_doc_ids(self) -> List[str]:
         """Fetch all ids of docs stored in the db."""
         cursor = self.connection.cursor()
         try:
@@ -45,7 +47,7 @@ class DocDB(object):
             cursor.close()
         return results
 
-    def get_doc_text(self, doc_id):
+    def get_doc_text(self, doc_id: T) -> Optional[str]:
         """Fetch the raw text of the doc for 'doc_id'."""
         cursor = self.connection.cursor()
         try:
