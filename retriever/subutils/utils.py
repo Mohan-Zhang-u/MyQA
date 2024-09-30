@@ -105,4 +105,6 @@ def filter_ngram(gram, mode='any'):
     elif mode == 'ends':
         return filtered[0] or filtered[-1]
     else:
-        raise ValueError('Invalid mode: %s' % mode)
+        error = ValueError('Invalid mode: %s' % mode)
+        error.add_note("The mode should be one of 'any', 'all', or 'ends'.")
+        raise error
