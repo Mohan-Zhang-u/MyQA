@@ -13,15 +13,18 @@ import argparse
 def CreateJsonFile(datafile_path, json_path):
     for filename in os.listdir(datafile_path):
         file_path = os.path.join(datafile_path, filename)
-        with codecs.open(file_path, 'r', encoding='utf8') as fp:
-            text = fp.read()
-            dictionary = {
-                'id': filename,
-                'text': text
-            }
-            json_file_path = os.path.join(json_path, filename)
-            with codecs.open(json_file_path, 'w', encoding='utf8') as fpw:
-                json.dump(dictionary, fpw, ensure_ascii=False)
+        try:
+            with codecs.open(file_path, 'r', encoding='utf8') as fp:
+                text = fp.read()
+                dictionary = {
+                    'id': filename,
+                    'text': text
+                }
+                json_file_path = os.path.join(json_path, filename)
+                with codecs.open(json_file_path, 'w', encoding='utf8') as fpw:
+                    json.dump(dictionary, fpw, ensure_ascii=False)
+        except* (FileNotFoundError, PermissionError) as e:
+            print(f"Error processing file {filename}: {e}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
