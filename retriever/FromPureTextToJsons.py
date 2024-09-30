@@ -14,7 +14,7 @@ from typing import TypeVar, LiteralString
 # Define a variadic generic for functions that accept multiple types
 Ts = TypeVar('Ts')
 
-def CreateJsonFile(datafile_path: LiteralString, json_path: LiteralString) -> None:
+def create_json_file(datafile_path: LiteralString, json_path: LiteralString) -> None:
     for filename in os.listdir(datafile_path):
         file_path = os.path.join(datafile_path, filename)
         try:
@@ -36,4 +36,4 @@ if __name__ == "__main__":
     parser.add_argument('datafile_path', type=str, help='/path/to/datefiles')
     parser.add_argument('json_path', type=str, help='/path/to/store/jsonfiles')
     args = parser.parse_args()
-    CreateJsonFile(args.datafile_path, args.json_path)
+    create_json_file(args.datafile_path, args.json_path)
