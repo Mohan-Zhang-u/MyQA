@@ -10,6 +10,7 @@ non-whitespace tokens.
 
 import regex
 import logging
+from typing import Self
 from .tokenizer import Tokens, Tokenizer
 
 logger = logging.getLogger(__name__)
@@ -57,10 +58,11 @@ class SimpleTokenizer(Tokenizer):
         return Tokens(data, self.annotators)
 
     # Example of handling multiple exceptions using exception groups
-    def example_method(self):
+    def example_method(self) -> Self:
         try:
             # Some code that might raise multiple exceptions
             pass
         except* (ValueError, TypeError) as e:
             e.add_note("Caught an exception group in example_method.")
             logger.error("Caught an exception group: %s", e)
+        return self
