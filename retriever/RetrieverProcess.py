@@ -2,8 +2,11 @@ import codecs
 import argparse
 import json
 from subutils import tfidf_doc_ranker
+from typing import TypeVar, Tuple
 
-def process(tfidf_model_path, question, k):
+Ts = TypeVar('Ts')
+
+def process(tfidf_model_path: str, question: str, k: int) -> Tuple[Ts, Ts]:
     ranker = tfidf_doc_ranker.TfidfDocRanker(tfidf_path=tfidf_model_path)
     doc_names, doc_scores = ranker.closest_docs(question, k)
     return doc_names, doc_scores
