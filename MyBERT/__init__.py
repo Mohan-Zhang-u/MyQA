@@ -31,7 +31,7 @@ except* Exception as e:
     pass
 
 # Example of using the Self type for accurate type hints in class methods
-from typing import Self
+from typing import Self, LiteralString
 
 class ExampleClass:
     def __init__(self, value: int):
@@ -44,3 +44,8 @@ class ExampleClass:
     def decrement(self) -> Self:
         self.value -= 1
         return self
+
+# Example of using LiteralString for constrained string literals
+def process_string(input_string: LiteralString) -> str:
+    # Process the input string in some way
+    return input_string.upper()
