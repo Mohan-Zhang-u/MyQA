@@ -25,7 +25,7 @@ import modeling
 import optimization
 import tokenization
 import tensorflow as tf
-from typing import TypeVar, Generic, List, Optional
+from typing import TypeVar, Generic, List, Optional, Self
 
 flags = tf.compat.v1.flags
 
