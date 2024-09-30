@@ -22,6 +22,7 @@ import codecs
 import collections
 import json
 import re
+from typing import Required, NotRequired
 
 import modeling
 import tokenization
