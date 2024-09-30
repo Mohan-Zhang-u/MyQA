@@ -23,6 +23,7 @@ import unicodedata
 import six
 import tensorflow as tf
 from typing import List, Dict, Union, TypeVar, Generic, LiteralString
+from dataclasses import dataclass
 
 T = TypeVar('T')
 Ts = TypeVar('Ts')
@@ -91,13 +92,16 @@ def whitespace_tokenize(text: str) -> List[str]:
     return tokens
 
 
+@dataclass
 class FullTokenizer(Generic[Ts]):
     """Runs end-to-end tokenziation."""
+    vocab_file: LiteralString
+    do_lower_case: bool = True
 
-    def __init__(self, vocab_file: LiteralString, do_lower_case: bool = True):
-        self.vocab = load_vocab(vocab_file)
+    def __post_init__(self):
+        self.vocab = load_vocab(self.vocab_file)
         self.inv_vocab = {v: k for k, v in self.vocab.items()}
-        self.basic_tokenizer = BasicTokenizer(do_lower_case=do_lower_case)
+        self.basic_tokenizer = BasicTokenizer(do_lower_case=self.do_lower_case)
         self.wordpiece_tokenizer = WordpieceTokenizer(vocab=self.vocab)
 
     def tokenize(self, text: str) -> List[str]:
@@ -115,16 +119,10 @@ class FullTokenizer(Generic[Ts]):
         return convert_by_vocab(self.inv_vocab, ids)
 
 
+@dataclass
 class BasicTokenizer:
     """Runs basic tokenization (punctuation splitting, lower casing, etc.)."""
-
-    def __init__(self, do_lower_case: bool = True):
-        """Constructs a BasicTokenizer.
-
-        Args:
-          do_lower_case: Whether to lower case the input.
-        """
-        self.do_lower_case = do_lower_case
+    do_lower_case: bool = True
 
     def tokenize(self, text: str) -> List[str]:
         """Tokenizes a piece of text."""
@@ -230,13 +228,12 @@ class BasicTokenizer:
         return "".join(output)
 
 
+@dataclass
 class WordpieceTokenizer:
     """Runs WordPiece tokenziation."""
-
-    def __init__(self, vocab: Dict[str, int], unk_token: str = "[UNK]", max_input_chars_per_word: int = 200):
-        self.vocab = vocab
-        self.unk_token = unk_token
-        self.max_input_chars_per_word = max_input_chars_per_word
+    vocab: Dict[str, int]
+    unk_token: str = "[UNK]"
+    max_input_chars_per_word: int = 200
 
     def tokenize(self, text: str) -> List[str]:
         """Tokenizes a piece of text into its word pieces.
