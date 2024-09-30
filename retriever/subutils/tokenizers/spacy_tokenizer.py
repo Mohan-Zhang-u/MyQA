@@ -13,9 +13,19 @@ import spacy
 import copy
 from .tokenizer import Tokens, Tokenizer
 from typing import TypeVar, Generic, Set, Tuple, Any, List, LiteralString
+from dataclasses import dataclass
 
 # Define a variadic generic type variable
 Ts = TypeVar('Ts')
+
+@dataclass
+class TokenData:
+    text: str
+    whitespace: str
+    span: Tuple[int, int]
+    tag: str
+    lemma: str
+    ent_type: str
 
 class SpacyTokenizer(Tokenizer, Generic[Ts]):
 
@@ -43,7 +53,7 @@ class SpacyTokenizer(Tokenizer, Generic[Ts]):
             e.add_note("Error occurred while tokenizing text with spaCy.")
             raise
 
-        data: List[Tuple[str, str, Tuple[int, int], str, str, str]] = []
+        data: List[TokenData] = []
         for i in range(len(tokens)):
             # Get whitespace
             start_ws = tokens[i].idx
@@ -52,13 +62,13 @@ class SpacyTokenizer(Tokenizer, Generic[Ts]):
             else:
                 end_ws = tokens[i].idx + len(tokens[i].text)
 
-            data.append((
-                tokens[i].text,
-                text[start_ws: end_ws],
-                (tokens[i].idx, tokens[i].idx + len(tokens[i].text)),
-                tokens[i].tag_,
-                tokens[i].lemma_,
-                tokens[i].ent_type_,
+            data.append(TokenData(
+                text=tokens[i].text,
+                whitespace=text[start_ws: end_ws],
+                span=(tokens[i].idx, tokens[i].idx + len(tokens[i].text)),
+                tag=tokens[i].tag_,
+                lemma=tokens[i].lemma_,
+                ent_type=tokens[i].ent_type_,
             ))
 
         # Set special option for non-entity tag: '' vs 'O' in spaCy
