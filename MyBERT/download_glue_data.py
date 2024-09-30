@@ -138,5 +138,6 @@ if __name__ == '__main__':
     except* Exception as e:
         import traceback
         tb_str = ''.join(traceback.format_exception(e))
-        print(f"An error occurred: {e}\nTraceback:\n{tb_str}")
+        e.add_note(f"An error occurred: {e}\nTraceback:\n{tb_str}")
+        print(e)
         sys.exit(1)
