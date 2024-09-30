@@ -23,8 +23,9 @@ def CreateJsonFile(datafile_path, json_path):
                 json_file_path = os.path.join(json_path, filename)
                 with codecs.open(json_file_path, 'w', encoding='utf8') as fpw:
                     json.dump(dictionary, fpw, ensure_ascii=False)
-        except* (FileNotFoundError, PermissionError) as e:
-            print(f"Error processing file {filename}: {e}")
+        except (FileNotFoundError, PermissionError) as e:
+            e.add_note(f"Error processing file {filename}: {e}")
+            print(e)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
