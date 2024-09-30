@@ -20,9 +20,11 @@ from __future__ import print_function
 
 import re
 import tensorflow as tf
+from typing import TypeVar, Generic, List, Tuple
 
+Ts = TypeVar('Ts')
 
-def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu):
+def create_optimizer(loss: tf.Tensor, init_lr: float, num_train_steps: int, num_warmup_steps: int, use_tpu: bool) -> tf.Operation:
     """Creates an optimizer training op."""
     global_step = tf.compat.v1.train.get_or_create_global_step()
 
@@ -81,17 +83,17 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu):
     return train_op
 
 
-class AdamWeightDecayOptimizer(tf.compat.v1.train.Optimizer):
+class AdamWeightDecayOptimizer(tf.compat.v1.train.Optimizer, Generic[Ts]):
     """A basic Adam optimizer that includes "correct" L2 weight decay."""
 
     def __init__(self,
-                 learning_rate,
-                 weight_decay_rate=0.0,
-                 beta_1=0.9,
-                 beta_2=0.999,
-                 epsilon=1e-6,
-                 exclude_from_weight_decay=None,
-                 name="AdamWeightDecayOptimizer"):
+                 learning_rate: float,
+                 weight_decay_rate: float = 0.0,
+                 beta_1: float = 0.9,
+                 beta_2: float = 0.999,
+                 epsilon: float = 1e-6,
+                 exclude_from_weight_decay: List[str] = None,
+                 name: str = "AdamWeightDecayOptimizer"):
         """Constructs a AdamWeightDecayOptimizer."""
         super(AdamWeightDecayOptimizer, self).__init__(False, name)
 
@@ -102,7 +104,7 @@ class AdamWeightDecayOptimizer(tf.compat.v1.train.Optimizer):
         self.epsilon = epsilon
         self.exclude_from_weight_decay = exclude_from_weight_decay
 
-    def apply_gradients(self, grads_and_vars, global_step=None, name=None):
+    def apply_gradients(self, grads_and_vars: List[Tuple[tf.Tensor, tf.Variable]], global_step: tf.Variable = None, name: str = None) -> tf.Operation:
         """See base class."""
         assignments = []
         for (grad, param) in grads_and_vars:
@@ -157,7 +159,7 @@ class AdamWeightDecayOptimizer(tf.compat.v1.train.Optimizer):
                  v.assign(next_v)])
         return tf.group(*assignments, name=name)
 
-    def _do_use_weight_decay(self, param_name):
+    def _do_use_weight_decay(self, param_name: str) -> bool:
         """Whether to use L2 weight decay for `param_name`."""
         if not self.weight_decay_rate:
             return False
@@ -167,7 +169,7 @@ class AdamWeightDecayOptimizer(tf.compat.v1.train.Optimizer):
                     return False
         return True
 
-    def _get_variable_name(self, param_name):
+    def _get_variable_name(self, param_name: str) -> str:
         """Get the variable name from the tensor name."""
         m = re.match("^(.*):\\d+$", param_name)
         if m is not None:
