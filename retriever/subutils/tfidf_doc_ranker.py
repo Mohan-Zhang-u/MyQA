@@ -118,3 +118,13 @@ class TfidfDocRanker(object):
         )
 
         return spvec
+
+    def handle_exceptions(self, exceptions):
+        """Handle multiple exceptions using exception groups."""
+        try:
+            # Example operation that might raise multiple exceptions
+            pass
+        except* (ValueError, TypeError) as e:
+            logger.error("Caught ValueError or TypeError: %s", e)
+        except* Exception as e:
+            logger.error("Caught a general exception: %s", e)
