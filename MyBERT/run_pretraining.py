@@ -22,6 +22,7 @@ import os
 import modeling
 import optimization
 import tensorflow.compat.v1 as tf
+from typing import LiteralString
 
 tf.disable_v2_behavior()
 
@@ -323,11 +324,11 @@ def gather_indexes(sequence_tensor, positions):
   return output_tensor
 
 
-def input_fn_builder(input_files,
-                     max_seq_length,
-                     max_predictions_per_seq,
-                     is_training,
-                     num_cpu_threads=4):
+def input_fn_builder(input_files: list[LiteralString],
+                     max_seq_length: int,
+                     max_predictions_per_seq: int,
+                     is_training: bool,
+                     num_cpu_threads: int = 4):
   """Creates an `input_fn` closure to be passed to TPUEstimator."""
 
   def input_fn(params):
