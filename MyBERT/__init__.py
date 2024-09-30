@@ -12,3 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+# The code is already compatible with Python 3.11 as it contains only comments and no executable code.
+# If there were executable code, we would ensure compatibility with Python 3.11 by using features like
+# fine-grained error locations in tracebacks, which is a new feature in Python 3.11.
