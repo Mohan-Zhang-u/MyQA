@@ -10,6 +10,7 @@ import sqlite3
 from . import utils
 from . import DEFAULTS
 from typing import TypeVar, Generic, List, Optional, Self
+from typing_extensions import LiteralString
 
 T = TypeVar('T')
 
@@ -47,7 +48,7 @@ class DocDB(Generic[T]):
             cursor.close()
         return results
 
-    def get_doc_text(self, doc_id: T) -> Optional[str]:
+    def get_doc_text(self, doc_id: LiteralString) -> Optional[str]:
         """Fetch the raw text of the doc for 'doc_id'."""
         cursor = self.connection.cursor()
         try:
