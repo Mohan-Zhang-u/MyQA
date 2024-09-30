@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import os
-from typing import TypeVar, Generic, Self
+from typing import TypeVar, Generic, Self, LiteralString
 
 DATA_DIR = 'mydata'
 
@@ -13,7 +13,7 @@ DEFAULTS = {
     ),
 }
 
-def set_default(key: str, value: str) -> None:
+def set_default(key: LiteralString, value: str) -> None:
     global DEFAULTS
     DEFAULTS[key] = value
 
@@ -23,7 +23,7 @@ class RetrieverBase(Generic[T]):
     def get_instance(self) -> Self:
         return self
 
-def get_class(name: str) -> T:
+def get_class(name: LiteralString) -> T:
     if name == 'tfidf':
         return TfidfDocRanker
     if name == 'sqlite':
