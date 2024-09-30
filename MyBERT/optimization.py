@@ -111,18 +111,22 @@ class AdamWeightDecayOptimizer(tf.compat.v1.train.Optimizer):
 
             param_name = self._get_variable_name(param.name)
 
-            m = tf.compat.v1.get_variable(
-                name=param_name + "/adam_m",
-                shape=param.shape.as_list(),
-                dtype=tf.float32,
-                trainable=False,
-                initializer=tf.zeros_initializer())
-            v = tf.compat.v1.get_variable(
-                name=param_name + "/adam_v",
-                shape=param.shape.as_list(),
-                dtype=tf.float32,
-                trainable=False,
-                initializer=tf.zeros_initializer())
+            try:
+                m = tf.compat.v1.get_variable(
+                    name=param_name + "/adam_m",
+                    shape=param.shape.as_list(),
+                    dtype=tf.float32,
+                    trainable=False,
+                    initializer=tf.zeros_initializer())
+                v = tf.compat.v1.get_variable(
+                    name=param_name + "/adam_v",
+                    shape=param.shape.as_list(),
+                    dtype=tf.float32,
+                    trainable=False,
+                    initializer=tf.zeros_initializer())
+            except Exception as e:
+                e.add_note(f"Error occurred while creating variables for {param_name}.")
+                raise
 
             # Standard Adam update.
             next_m = (
