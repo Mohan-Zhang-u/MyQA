@@ -25,6 +25,7 @@ import modeling
 import optimization
 import tokenization
 import tensorflow as tf
+from typing import TypeVar, Generic, List, Optional
 
 flags = tf.compat.v1.flags
 
@@ -123,11 +124,12 @@ flags.DEFINE_integer(
     "num_tpu_cores", 8,
     "Only used if `use_tpu` is True. Total number of TPU cores to use.")
 
+Ts = TypeVar('Ts')
 
-class InputExample(object):
+class InputExample(Generic[Ts]):
   """A single training/test example for simple sequence classification."""
 
-  def __init__(self, guid, text_a, text_b=None, label=None):
+  def __init__(self, guid: str, text_a: str, text_b: Optional[str] = None, label: Optional[str] = None):
     """Constructs a InputExample.
 
     Args:
@@ -145,37 +147,37 @@ class InputExample(object):
     self.label = label
 
 
-class InputFeatures(object):
+class InputFeatures(Generic[Ts]):
   """A single set of features of data."""
 
-  def __init__(self, input_ids, input_mask, segment_ids, label_id):
+  def __init__(self, input_ids: List[int], input_mask: List[int], segment_ids: List[int], label_id: int):
     self.input_ids = input_ids
     self.input_mask = input_mask
     self.segment_ids = segment_ids
     self.label_id = label_id
 
 
-class DataProcessor(object):
+class DataProcessor(Generic[Ts]):
   """Base class for data converters for sequence classification data sets."""
 
-  def get_train_examples(self, data_dir):
+  def get_train_examples(self, data_dir: str) -> List[InputExample]:
     """Gets a collection of `InputExample`s for the train set."""
     raise NotImplementedError()
 
-  def get_dev_examples(self, data_dir):
+  def get_dev_examples(self, data_dir: str) -> List[InputExample]:
     """Gets a collection of `InputExample`s for the dev set."""
     raise NotImplementedError()
 
-  def get_test_examples(self, data_dir):
+  def get_test_examples(self, data_dir: str) -> List[InputExample]:
     """Gets a collection of `InputExample`s for prediction."""
     raise NotImplementedError()
 
-  def get_labels(self):
+  def get_labels(self) -> List[str]:
     """Gets the list of labels for this data set."""
     raise NotImplementedError()
 
   @classmethod
-  def _read_tsv(cls, input_file, quotechar=None):
+  def _read_tsv(cls, input_file: str, quotechar: Optional[str] = None) -> List[List[str]]:
     """Reads a tab separated value file."""
     with tf.io.gfile.GFile(input_file, "r") as f:
       reader = csv.reader(f, delimiter="\t", quotechar=quotechar)
@@ -191,7 +193,7 @@ class XnliProcessor(DataProcessor):
   def __init__(self):
     self.language = "zh"
 
-  def get_train_examples(self, data_dir):
+  def get_train_examples(self, data_dir: str) -> List[InputExample]:
     """See base class."""
     lines = self._read_tsv(
         os.path.join(data_dir, "multinli",
@@ -210,7 +212,7 @@ class XnliProcessor(DataProcessor):
           InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
     return examples
 
-  def get_dev_examples(self, data_dir):
+  def get_dev_examples(self, data_dir: str) -> List[InputExample]:
     """See base class."""
     lines = self._read_tsv(os.path.join(data_dir, "xnli.dev.tsv"))
     examples = []
@@ -228,7 +230,7 @@ class XnliProcessor(DataProcessor):
           InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
     return examples
 
-  def get_labels(self):
+  def get_labels(self) -> List[str]:
     """See base class."""
     return ["contradiction", "entailment", "neutral"]
 
@@ -236,27 +238,27 @@ class XnliProcessor(DataProcessor):
 class MnliProcessor(DataProcessor):
   """Processor for the MultiNLI data set (GLUE version)."""
 
-  def get_train_examples(self, data_dir):
+  def get_train_examples(self, data_dir: str) -> List[InputExample]:
     """See base class."""
     return self._create_examples(
         self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
 
-  def get_dev_examples(self, data_dir):
+  def get_dev_examples(self, data_dir: str) -> List[InputExample]:
     """See base class."""
     return self._create_examples(
         self._read_tsv(os.path.join(data_dir, "dev_matched.tsv")),
         "dev_matched")
 
-  def get_test_examples(self, data_dir):
+  def get_test_examples(self, data_dir: str) -> List[InputExample]:
     """See base class."""
     return self._create_examples(
         self._read_tsv(os.path.join(data_dir, "test_matched.tsv")), "test")
 
-  def get_labels(self):
+  def get_labels(self) -> List[str]:
     """See base class."""
     return ["contradiction", "entailment", "neutral"]
 
-  def _create_examples(self, lines, set_type):
+  def _create_examples(self, lines: List[List[str]], set_type: str) -> List[InputExample]:
     """Creates examples for the training and dev sets."""
     examples = []
     for (i, line) in enumerate(lines):
@@ -277,26 +279,26 @@ class MnliProcessor(DataProcessor):
 class MrpcProcessor(DataProcessor):
   """Processor for the MRPC data set (GLUE version)."""
 
-  def get_train_examples(self, data_dir):
+  def get_train_examples(self, data_dir: str) -> List[InputExample]:
     """See base class."""
     return self._create_examples(
         self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
 
-  def get_dev_examples(self, data_dir):
+  def get_dev_examples(self, data_dir: str) -> List[InputExample]:
     """See base class."""
     return self._create_examples(
         self._read_tsv(os.path.join(data_dir, "dev.tsv")), "dev")
 
-  def get_test_examples(self, data_dir):
+  def get_test_examples(self, data_dir: str) -> List[InputExample]:
     """See base class."""
     return self._create_examples(
         self._read_tsv(os.path.join(data_dir, "test.tsv")), "test")
 
-  def get_labels(self):
+  def get_labels(self) -> List[str]:
     """See base class."""
     return ["0", "1"]
 
-  def _create_examples(self, lines, set_type):
+  def _create_examples(self, lines: List[List[str]], set_type: str) -> List[InputExample]:
     """Creates examples for the training and dev sets."""
     examples = []
     for (i, line) in enumerate(lines):
@@ -317,26 +319,26 @@ class MrpcProcessor(DataProcessor):
 class ColaProcessor(DataProcessor):
   """Processor for the CoLA data set (GLUE version)."""
 
-  def get_train_examples(self, data_dir):
+  def get_train_examples(self, data_dir: str) -> List[InputExample]:
     """See base class."""
     return self._create_examples(
         self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
 
-  def get_dev_examples(self, data_dir):
+  def get_dev_examples(self, data_dir: str) -> List[InputExample]:
     """See base class."""
     return self._create_examples(
         self._read_tsv(os.path.join(data_dir, "dev.tsv")), "dev")
 
-  def get_test_examples(self, data_dir):
+  def get_test_examples(self, data_dir: str) -> List[InputExample]:
     """See base class."""
     return self._create_examples(
         self._read_tsv(os.path.join(data_dir, "test.tsv")), "test")
 
-  def get_labels(self):
+  def get_labels(self) -> List[str]:
     """See base class."""
     return ["0", "1"]
 
-  def _create_examples(self, lines, set_type):
+  def _create_examples(self, lines: List[List[str]], set_type: str) -> List[InputExample]:
     """Creates examples for the training and dev sets."""
     examples = []
     for (i, line) in enumerate(lines):
@@ -355,8 +357,8 @@ class ColaProcessor(DataProcessor):
     return examples
 
 
-def convert_single_example(ex_index, example, label_list, max_seq_length,
-                           tokenizer):
+def convert_single_example(ex_index: int, example: InputExample, label_list: List[str], max_seq_length: int,
+                           tokenizer: tokenization.FullTokenizer) -> InputFeatures:
   """Converts a single `InputExample` into a single `InputFeatures`."""
   label_map = {}
   for (i, label) in enumerate(label_list):
@@ -448,7 +450,7 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
 
 
 def file_based_convert_examples_to_features(
-    examples, label_list, max_seq_length, tokenizer, output_file):
+    examples: List[InputExample], label_list: List[str], max_seq_length: int, tokenizer: tokenization.FullTokenizer, output_file: str):
   """Convert a set of `InputExample`s to a TFRecord file."""
 
   writer = tf.io.TFRecordWriter(output_file)
@@ -460,7 +462,7 @@ def file_based_convert_examples_to_features(
     feature = convert_single_example(ex_index, example, label_list,
                                      max_seq_length, tokenizer)
 
-    def create_int_feature(values):
+    def create_int_feature(values: List[int]) -> tf.train.Feature:
       f = tf.train.Feature(int64_list=tf.train.Int64List(value=list(values)))
       return f
 
@@ -474,8 +476,8 @@ def file_based_convert_examples_to_features(
     writer.write(tf_example.SerializeToString())
 
 
-def file_based_input_fn_builder(input_file, seq_length, is_training,
-                                drop_remainder):
+def file_based_input_fn_builder(input_file: str, seq_length: int, is_training: bool,
+                                drop_remainder: bool):
   """Creates an `input_fn` closure to be passed to TPUEstimator."""
 
   name_to_features = {
@@ -485,7 +487,7 @@ def file_based_input_fn_builder(input_file, seq_length, is_training,
       "label_ids": tf.io.FixedLenFeature([], tf.int64),
   }
 
-  def _decode_record(record, name_to_features):
+  def _decode_record(record: tf.Tensor, name_to_features: dict) -> dict:
     """Decodes a record to a TensorFlow example."""
     example = tf.io.parse_single_example(record, name_to_features)
 
@@ -499,7 +501,7 @@ def file_based_input_fn_builder(input_file, seq_length, is_training,
 
     return example
 
-  def input_fn(params):
+  def input_fn(params: dict) -> tf.data.Dataset:
     """The actual input function."""
     batch_size = params["batch_size"]
 
@@ -521,7 +523,7 @@ def file_based_input_fn_builder(input_file, seq_length, is_training,
   return input_fn
 
 
-def _truncate_seq_pair(tokens_a, tokens_b, max_length):
+def _truncate_seq_pair(tokens_a: List[str], tokens_b: List[str], max_length: int):
   """Truncates a sequence pair in place to the maximum length."""
 
   # This is a simple heuristic which will always truncate the longer sequence
@@ -538,8 +540,8 @@ def _truncate_seq_pair(tokens_a, tokens_b, max_length):
       tokens_b.pop()
 
 
-def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
-                 labels, num_labels, use_one_hot_embeddings):
+def create_model(bert_config: modeling.BertConfig, is_training: bool, input_ids: tf.Tensor, input_mask: tf.Tensor, segment_ids: tf.Tensor,
+                 labels: tf.Tensor, num_labels: int, use_one_hot_embeddings: bool) -> tuple:
   """Creates a classification model."""
   model = modeling.BertModel(
       config=bert_config,
@@ -583,12 +585,12 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
     return (loss, per_example_loss, logits, probabilities)
 
 
-def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
-                     num_train_steps, num_warmup_steps, use_tpu,
-                     use_one_hot_embeddings):
+def model_fn_builder(bert_config: modeling.BertConfig, num_labels: int, init_checkpoint: str, learning_rate: float,
+                     num_train_steps: int, num_warmup_steps: int, use_tpu: bool,
+                     use_one_hot_embeddings: bool):
   """Returns `model_fn` closure for TPUEstimator."""
 
-  def model_fn(features, labels, mode, params):  # pylint: disable=unused-argument
+  def model_fn(features: dict, labels: tf.Tensor, mode: tf.estimator.ModeKeys, params: dict):  # pylint: disable=unused-argument
     """The `model_fn` for TPUEstimator."""
 
     tf.compat.v1.logging.info("*** Features ***")
@@ -643,7 +645,7 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
           scaffold_fn=scaffold_fn)
     elif mode == tf.estimator.ModeKeys.EVAL:
 
-      def metric_fn(per_example_loss, label_ids, logits):
+      def metric_fn(per_example_loss: tf.Tensor, label_ids: tf.Tensor, logits: tf.Tensor) -> dict:
         predictions = tf.argmax(logits, axis=-1, output_type=tf.int32)
         accuracy = tf.compat.v1.metrics.accuracy(label_ids, predictions)
         loss = tf.compat.v1.metrics.mean(per_example_loss)
@@ -668,7 +670,7 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
 
 # This function is not used by this file but is still used by the Colab and
 # people who depend on it.
-def input_fn_builder(features, seq_length, is_training, drop_remainder):
+def input_fn_builder(features: List[InputFeatures], seq_length: int, is_training: bool, drop_remainder: bool):
   """Creates an `input_fn` closure to be passed to TPUEstimator."""
 
   all_input_ids = []
@@ -682,7 +684,7 @@ def input_fn_builder(features, seq_length, is_training, drop_remainder):
     all_segment_ids.append(feature.segment_ids)
     all_label_ids.append(feature.label_id)
 
-  def input_fn(params):
+  def input_fn(params: dict) -> tf.data.Dataset:
     """The actual input function."""
     batch_size = params["batch_size"]
 
@@ -722,8 +724,8 @@ def input_fn_builder(features, seq_length, is_training, drop_remainder):
 
 # This function is not used by this file but is still used by the Colab and
 # people who depend on it.
-def convert_examples_to_features(examples, label_list, max_seq_length,
-                                 tokenizer):
+def convert_examples_to_features(examples: List[InputExample], label_list: List[str], max_seq_length: int,
+                                 tokenizer: tokenization.FullTokenizer) -> List[InputFeatures]:
   """Convert a set of `InputExample`s to a list of `InputFeatures`."""
 
   features = []
