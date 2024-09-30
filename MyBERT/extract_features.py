@@ -23,6 +23,7 @@ import collections
 import json
 import re
 from typing import Self, LiteralString
+from dataclasses import dataclass
 
 import modeling
 import tokenization
@@ -78,32 +79,20 @@ flags.DEFINE_bool(
     "tf.nn.embedding_lookup will be used. On TPUs, this should be True "
     "since it is much faster.")
 
-
+@dataclass
 class InputExample:
-    def __init__(self, unique_id: int, text_a: LiteralString, text_b: LiteralString):
-        self.unique_id = unique_id
-        self.text_a = text_a
-        self.text_b = text_b
+    unique_id: int
+    text_a: LiteralString
+    text_b: LiteralString
 
-    def __repr__(self) -> Self:
-        return f"InputExample(unique_id={self.unique_id}, text_a={self.text_a}, text_b={self.text_b})"
-
-
+@dataclass
 class InputFeatures:
     """A single set of features of data."""
-
-    def __init__(self, unique_id: int, tokens: list[str], input_ids: list[int], input_mask: list[int], input_type_ids: list[int]):
-        self.unique_id = unique_id
-        self.tokens = tokens
-        self.input_ids = input_ids
-        self.input_mask = input_mask
-        self.input_type_ids = input_type_ids
-
-    def __repr__(self) -> Self:
-        return (f"InputFeatures(unique_id={self.unique_id}, tokens={self.tokens}, "
-                f"input_ids={self.input_ids}, input_mask={self.input_mask}, "
-                f"input_type_ids={self.input_type_ids})")
-
+    unique_id: int
+    tokens: list[str]
+    input_ids: list[int]
+    input_mask: list[int]
+    input_type_ids: list[int]
 
 def input_fn_builder(features: list[InputFeatures], seq_length: int):
     """Creates an `input_fn` closure to be passed to TPUEstimator."""
@@ -151,7 +140,6 @@ def input_fn_builder(features: list[InputFeatures], seq_length: int):
         return d
 
     return input_fn
-
 
 def model_fn_builder(bert_config, init_checkpoint: str, layer_indexes: list[int], use_tpu: bool,
                      use_one_hot_embeddings: bool):
@@ -213,7 +201,6 @@ def model_fn_builder(bert_config, init_checkpoint: str, layer_indexes: list[int]
         return output_spec
 
     return model_fn
-
 
 def convert_examples_to_features(examples: list[InputExample], seq_length: int, tokenizer):
     """Loads a data file into a list of `InputBatch`s."""
@@ -306,7 +293,6 @@ def convert_examples_to_features(examples: list[InputExample], seq_length: int, 
                 input_type_ids=input_type_ids))
     return features
 
-
 def _truncate_seq_pair(tokens_a: list[str], tokens_b: list[str], max_length: int):
     """Truncates a sequence pair in place to the maximum length."""
 
@@ -322,7 +308,6 @@ def _truncate_seq_pair(tokens_a: list[str], tokens_b: list[str], max_length: int
             tokens_a.pop()
         else:
             tokens_b.pop()
-
 
 def read_examples(input_file: LiteralString):
     """Read a list of `InputExample`s from an input file."""
@@ -350,7 +335,6 @@ def read_examples(input_file: LiteralString):
         e.add_note(f"Error reading examples from file: {input_file}")
         raise
     return examples
-
 
 def main(_):
     tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.INFO)
@@ -428,7 +412,6 @@ def main(_):
     except Exception as e:
         e.add_note(f"Error writing predictions to file: {FLAGS.output_file}")
         raise
-
 
 if __name__ == "__main__":
     flags.mark_flag_as_required("input_file")
