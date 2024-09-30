@@ -21,34 +21,11 @@ import codecs
 # │       └── "title": "document id"
 # └── "version": 1.1
 
-
-# data=[]
-# version="my_ver"
-#
-# # now, things inside data: (multiple elements)
-# title=""
-# paragraphs=[]
-#
-# # now, things inside paragraphs: (multiple elements)
-# context=""
-# qas=[]
-#
-# # now, things inside qas: (multiple elements)
-# answers=[]
-# id=""
-# question=""
-#
-# # now, things inside answers: (multiple elements)
-# answer_start=-1
-# text=""
-
-
 def get_paragraph(filename):
-    with codecs.open('Paragraphs/'+filename, 'r', encoding='utf8') as fp:
+    with codecs.open('Paragraphs/' + filename, 'r', encoding='utf8') as fp:
         paragraph = fp.read()
         paragraph = paragraph.replace('\r\n', '\n')
         paragraph = paragraph.replace('\n', '\n')
-        # paragraph.replace('\'', ' ')
         paragraph = paragraph.replace('\'', '\\\'')
         paragraph = paragraph.replace('\"', '\\\"')
         return paragraph
@@ -60,23 +37,6 @@ def generate_multi_test_cases(list_of_paragraphs, list_of_questions, name_of_fil
     data = []
     version = "my_ver"
 
-    # now, things inside data: (multiple elements)
-    title = ""
-    paragraphs = []
-
-    # now, things inside paragraphs: (multiple elements)
-    context = ""
-    qas = []
-
-    # now, things inside qas: (multiple elements)
-    answers = []
-    id = ""
-    question = ""
-
-    # now, things inside answers: (multiple elements)
-    answer_start = -1
-    text = ""
-
     jsondict = {}
     jsondict["data"] = data
     jsondict["version"] = version
@@ -85,27 +45,12 @@ def generate_multi_test_cases(list_of_paragraphs, list_of_questions, name_of_fil
         new_paragraph = {}
         new_paragraph["context"] = list_of_paragraphs[j]
         new_paragraph["qas"] = [{"answers": [{"answer_start": -1, "text": ""}], "question": list_of_questions[j], "id": list_of_questions[j]}]
-        data.append({"title": "", "paragraphs": [new_paragraph]})  # here we can have multiple paragraph in paragraphs
+        data.append({"title": "", "paragraphs": [new_paragraph]})
 
-    with open('Data/' + name_of_file + '.json', 'w') as fp:
-        json.dump(jsondict, fp)
-
+    with open('Data/' + name_of_file + '.json', 'w', encoding='utf8') as fp:
+        json.dump(jsondict, fp, ensure_ascii=False, indent=4)
 
 if __name__ == "__main__":
-    # list_of_paragraphs=["Super Bowl 50 was an American football game to determine the champion of the National Football League (NFL) for the 2015 season. The American Football Conference (AFC) champion Denver Broncos defeated the National Football Conference (NFC) champion Carolina Panthers 24\u201310 to earn their third Super Bowl title. The game was played on February 7, 2016, at Levi's Stadium in the San Francisco Bay Area at Santa Clara, California. As this was the 50th Super Bowl, the league emphasized the \"golden anniversary\" with various gold-themed initiatives, as well as temporarily suspending the tradition of naming each Super Bowl game with Roman numerals (under which the game would have been known as \"Super Bowl L\"), so that the logo could prominently feature the Arabic numerals 50."]
-    # list_of_questions = ["hich NFL team represented the AFC at Super Bowl 50?"]
-    # list_of_paragraphs.append(get_paragraph("dota2.txt"))
-    # list_of_questions.append("what is Dota 2?")
-    # list_of_paragraphs.append(get_paragraph("dota2.txt"))
-    # list_of_questions.append("what is The International?")
-    # list_of_paragraphs.append(get_paragraph("dota2.txt"))
-    # list_of_questions.append("When did Dota 2 support VR?")
-    # list_of_paragraphs.append(get_paragraph("dota2.txt"))
-    # list_of_questions.append("Who developed Dota 2?")
-    # list_of_paragraphs.append(get_paragraph("dota2.txt"))
-    # list_of_questions.append("How many teams are there in one game of Dota 2?")
-    # list_of_paragraphs.append(get_paragraph("dota2.txt"))
-    # list_of_questions.append("How can a team win a game of Dota 2?")
     list_of_paragraphs = []
     list_of_questions = []
     list_of_paragraphs.append(get_paragraph("imperial_short.txt"))
