@@ -21,6 +21,7 @@ from __future__ import print_function
 import re
 import tensorflow as tf
 from typing import TypeVar, Generic, List, Tuple, Self, LiteralString
+from dataclasses import dataclass
 
 Ts = TypeVar('Ts')
 
@@ -82,27 +83,19 @@ def create_optimizer(loss: tf.Tensor, init_lr: float, num_train_steps: int, num_
     train_op = tf.group(train_op, [global_step.assign(new_global_step)])
     return train_op
 
-
+@dataclass
 class AdamWeightDecayOptimizer(tf.compat.v1.train.Optimizer, Generic[Ts]):
     """A basic Adam optimizer that includes "correct" L2 weight decay."""
+    learning_rate: float
+    weight_decay_rate: float = 0.0
+    beta_1: float = 0.9
+    beta_2: float = 0.999
+    epsilon: float = 1e-6
+    exclude_from_weight_decay: List[LiteralString] = None
+    name: LiteralString = "AdamWeightDecayOptimizer"
 
-    def __init__(self,
-                 learning_rate: float,
-                 weight_decay_rate: float = 0.0,
-                 beta_1: float = 0.9,
-                 beta_2: float = 0.999,
-                 epsilon: float = 1e-6,
-                 exclude_from_weight_decay: List[LiteralString] = None,
-                 name: LiteralString = "AdamWeightDecayOptimizer"):
-        """Constructs a AdamWeightDecayOptimizer."""
-        super(AdamWeightDecayOptimizer, self).__init__(False, name)
-
-        self.learning_rate = learning_rate
-        self.weight_decay_rate = weight_decay_rate
-        self.beta_1 = beta_1
-        self.beta_2 = beta_2
-        self.epsilon = epsilon
-        self.exclude_from_weight_decay = exclude_from_weight_decay
+    def __post_init__(self):
+        super(AdamWeightDecayOptimizer, self).__init__(False, self.name)
 
     def apply_gradients(self, grads_and_vars: List[Tuple[tf.Tensor, tf.Variable]], global_step: tf.Variable = None, name: LiteralString = None) -> tf.Operation:
         """See base class."""
@@ -185,5 +178,5 @@ class AdamWeightDecayOptimizer(tf.compat.v1.train.Optimizer, Generic[Ts]):
             beta_2=self.beta_2,
             epsilon=self.epsilon,
             exclude_from_weight_decay=self.exclude_from_weight_decay,
-            name=self._name
+            name=self.name
         )
