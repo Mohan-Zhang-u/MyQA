@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import os
+from typing import TypeVar, Generic
+
 DATA_DIR = 'mydata'
 
 DEFAULTS = {
@@ -11,11 +13,16 @@ DEFAULTS = {
     ),
 }
 
-def set_default(key, value):
+def set_default(key: str, value: str) -> None:
     global DEFAULTS
     DEFAULTS[key] = value
 
-def get_class(name):
+T = TypeVar('T', bound='RetrieverBase')
+
+class RetrieverBase(Generic[T]):
+    pass
+
+def get_class(name: str) -> T:
     if name == 'tfidf':
         return TfidfDocRanker
     if name == 'sqlite':
