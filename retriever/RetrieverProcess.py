@@ -2,7 +2,7 @@ import codecs
 import argparse
 import json
 from subutils import tfidf_doc_ranker
-from typing import TypeVar, Tuple
+from typing import TypeVar, Tuple, Self
 
 Ts = TypeVar('Ts')
 
