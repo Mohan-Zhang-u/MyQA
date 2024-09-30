@@ -19,6 +19,7 @@ from __future__ import annotations
 import collections
 import random
 from typing import List, Tuple, Dict, Any, TypeVar, LiteralString
+from dataclasses import dataclass
 
 import tokenization
 import tensorflow as tf
@@ -62,16 +63,14 @@ flags.DEFINE_float(
 
 Self = TypeVar('Self', bound='TrainingInstance')
 
+@dataclass
 class TrainingInstance:
     """A single training instance (sentence pair)."""
-
-    def __init__(self, tokens: List[str], segment_ids: List[int], masked_lm_positions: List[int], masked_lm_labels: List[str],
-                 is_random_next: bool):
-        self.tokens = tokens
-        self.segment_ids = segment_ids
-        self.is_random_next = is_random_next
-        self.masked_lm_positions = masked_lm_positions
-        self.masked_lm_labels = masked_lm_labels
+    tokens: List[str]
+    segment_ids: List[int]
+    masked_lm_positions: List[int]
+    masked_lm_labels: List[str]
+    is_random_next: bool
 
     def __str__(self) -> str:
         s = ""
@@ -85,9 +84,6 @@ class TrainingInstance:
             [tokenization.printable_text(x) for x in self.masked_lm_labels]))
         s += "\n"
         return s
-
-    def __repr__(self) -> str:
-        return self.__str__()
 
     @classmethod
     def from_tokens(cls: Self, tokens: List[str], segment_ids: List[int], masked_lm_positions: List[int], masked_lm_labels: List[str],
