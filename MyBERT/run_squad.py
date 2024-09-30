@@ -28,7 +28,9 @@ import optimization
 import tokenization
 import six
 import tensorflow as tf
-from typing import List, Tuple, Dict, Any, Callable
+from typing import List, Tuple, Dict, Any, Callable, TypeVar
+
+Self = TypeVar('Self', bound='SquadExample')
 
 flags = tf.compat.v1.flags
 
