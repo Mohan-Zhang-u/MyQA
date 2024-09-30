@@ -46,7 +46,7 @@ def init(tokenizer_class, db_class, db_opts):
     Finalize(PROCESS_DB, PROCESS_DB.close, exitpriority=100)
 
 
-def fetch_text(doc_id):
+def fetch_text(doc_id: str) -> str:
     global PROCESS_DB
     try:
         return PROCESS_DB.get_doc_text(doc_id)
@@ -55,7 +55,7 @@ def fetch_text(doc_id):
         raise
 
 
-def tokenize(text):
+def tokenize(text: str) -> list[str]:
     global PROCESS_TOK
     try:
         return PROCESS_TOK.tokenize(text)
@@ -69,7 +69,7 @@ def tokenize(text):
 # ------------------------------------------------------------------------------
 
 
-def count(ngram, hash_size, doc_id):
+def count(ngram: int, hash_size: int, doc_id: str) -> tuple[list[int], list[int], list[int]]:
     """Fetch the text of a document and compute hashed ngrams counts."""
     global DOC2IDX
     row, col, data = [], [], []
@@ -95,7 +95,7 @@ def count(ngram, hash_size, doc_id):
     return row, col, data
 
 
-def get_count_matrix(args, db, db_opts):
+def get_count_matrix(args: argparse.Namespace, db: str, db_opts: dict) -> tuple[sp.csr_matrix, tuple[dict[str, int], list[str]]]:
     """Form a sparse word to document count matrix (inverted index).
 
     M[i, j] = # times word i appears in document j.
@@ -143,7 +143,7 @@ def get_count_matrix(args, db, db_opts):
 # ------------------------------------------------------------------------------
 
 
-def get_tfidf_matrix(cnts):
+def get_tfidf_matrix(cnts: sp.csr_matrix) -> sp.csr_matrix:
     """Convert the word count matrix into tfidf one.
 
     tfidf = log(tf + 1) * log((N - Nt + 0.5) / (Nt + 0.5))
@@ -164,7 +164,7 @@ def get_tfidf_matrix(cnts):
     return tfidfs
 
 
-def get_doc_freqs(cnts):
+def get_doc_freqs(cnts: sp.csr_matrix) -> np.ndarray:
     """Return word --> # of docs it appears in."""
     try:
         binary = (cnts > 0).astype(int)
