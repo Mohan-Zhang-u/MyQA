@@ -22,9 +22,12 @@ import collections
 import unicodedata
 import six
 import tensorflow as tf
+from typing import List, Dict, Union, TypeVar, Generic
 
+T = TypeVar('T')
+Ts = TypeVar('Ts')
 
-def convert_to_unicode(text):
+def convert_to_unicode(text: Union[str, bytes]) -> str:
     """Converts `text` to Unicode (if it's not already), assuming utf-8 input."""
     if isinstance(text, str):
         return text
@@ -36,7 +39,7 @@ def convert_to_unicode(text):
         raise exc
 
 
-def printable_text(text):
+def printable_text(text: Union[str, bytes]) -> str:
     """Returns text encoded in a way suitable for print or `tf.logging`."""
     if isinstance(text, str):
         return text
@@ -48,7 +51,7 @@ def printable_text(text):
         raise exc
 
 
-def load_vocab(vocab_file):
+def load_vocab(vocab_file: str) -> Dict[str, int]:
     """Loads a vocabulary file into a dictionary."""
     vocab = collections.OrderedDict()
     index = 0
@@ -63,7 +66,7 @@ def load_vocab(vocab_file):
     return vocab
 
 
-def convert_by_vocab(vocab, items):
+def convert_by_vocab(vocab: Dict[T, int], items: List[T]) -> List[int]:
     """Converts a sequence of [tokens|ids] using the vocab."""
     output = []
     for item in items:
@@ -71,15 +74,15 @@ def convert_by_vocab(vocab, items):
     return output
 
 
-def convert_tokens_to_ids(vocab, tokens):
+def convert_tokens_to_ids(vocab: Dict[str, int], tokens: List[str]) -> List[int]:
     return convert_by_vocab(vocab, tokens)
 
 
-def convert_ids_to_tokens(inv_vocab, ids):
+def convert_ids_to_tokens(inv_vocab: Dict[int, str], ids: List[int]) -> List[str]:
     return convert_by_vocab(inv_vocab, ids)
 
 
-def whitespace_tokenize(text):
+def whitespace_tokenize(text: str) -> List[str]:
     """Runs basic whitespace cleaning and splitting on a piece of text."""
     text = text.strip()
     if not text:
@@ -88,16 +91,16 @@ def whitespace_tokenize(text):
     return tokens
 
 
-class FullTokenizer(object):
+class FullTokenizer(Generic[Ts]):
     """Runs end-to-end tokenziation."""
 
-    def __init__(self, vocab_file, do_lower_case=True):
+    def __init__(self, vocab_file: str, do_lower_case: bool = True):
         self.vocab = load_vocab(vocab_file)
         self.inv_vocab = {v: k for k, v in self.vocab.items()}
         self.basic_tokenizer = BasicTokenizer(do_lower_case=do_lower_case)
         self.wordpiece_tokenizer = WordpieceTokenizer(vocab=self.vocab)
 
-    def tokenize(self, text):
+    def tokenize(self, text: str) -> List[str]:
         split_tokens = []
         for token in self.basic_tokenizer.tokenize(text):
             for sub_token in self.wordpiece_tokenizer.tokenize(token):
@@ -105,17 +108,17 @@ class FullTokenizer(object):
 
         return split_tokens
 
-    def convert_tokens_to_ids(self, tokens):
+    def convert_tokens_to_ids(self, tokens: List[str]) -> List[int]:
         return convert_by_vocab(self.vocab, tokens)
 
-    def convert_ids_to_tokens(self, ids):
+    def convert_ids_to_tokens(self, ids: List[int]) -> List[str]:
         return convert_by_vocab(self.inv_vocab, ids)
 
 
-class BasicTokenizer(object):
+class BasicTokenizer:
     """Runs basic tokenization (punctuation splitting, lower casing, etc.)."""
 
-    def __init__(self, do_lower_case=True):
+    def __init__(self, do_lower_case: bool = True):
         """Constructs a BasicTokenizer.
 
         Args:
@@ -123,7 +126,7 @@ class BasicTokenizer(object):
         """
         self.do_lower_case = do_lower_case
 
-    def tokenize(self, text):
+    def tokenize(self, text: str) -> List[str]:
         """Tokenizes a piece of text."""
         text = convert_to_unicode(text)
         text = self._clean_text(text)
@@ -147,7 +150,7 @@ class BasicTokenizer(object):
         output_tokens = whitespace_tokenize(" ".join(split_tokens))
         return output_tokens
 
-    def _run_strip_accents(self, text):
+    def _run_strip_accents(self, text: str) -> str:
         """Strips accents from a piece of text."""
         text = unicodedata.normalize("NFD", text)
         output = []
@@ -158,7 +161,7 @@ class BasicTokenizer(object):
             output.append(char)
         return "".join(output)
 
-    def _run_split_on_punc(self, text):
+    def _run_split_on_punc(self, text: str) -> List[str]:
         """Splits punctuation on a piece of text."""
         chars = list(text)
         i = 0
@@ -178,7 +181,7 @@ class BasicTokenizer(object):
 
         return ["".join(x) for x in output]
 
-    def _tokenize_chinese_chars(self, text):
+    def _tokenize_chinese_chars(self, text: str) -> str:
         """Adds whitespace around any CJK character."""
         output = []
         for char in text:
@@ -191,7 +194,7 @@ class BasicTokenizer(object):
                 output.append(char)
         return "".join(output)
 
-    def _is_chinese_char(self, cp):
+    def _is_chinese_char(self, cp: int) -> bool:
         """Checks whether CP is the codepoint of a CJK character."""
         # This defines a "chinese character" as anything in the CJK Unicode block:
         #   https://en.wikipedia.org/wiki/CJK_Unified_Ideographs_(Unicode_block)
@@ -213,7 +216,7 @@ class BasicTokenizer(object):
 
         return False
 
-    def _clean_text(self, text):
+    def _clean_text(self, text: str) -> str:
         """Performs invalid character removal and whitespace cleanup on text."""
         output = []
         for char in text:
@@ -227,15 +230,15 @@ class BasicTokenizer(object):
         return "".join(output)
 
 
-class WordpieceTokenizer(object):
+class WordpieceTokenizer:
     """Runs WordPiece tokenziation."""
 
-    def __init__(self, vocab, unk_token="[UNK]", max_input_chars_per_word=200):
+    def __init__(self, vocab: Dict[str, int], unk_token: str = "[UNK]", max_input_chars_per_word: int = 200):
         self.vocab = vocab
         self.unk_token = unk_token
         self.max_input_chars_per_word = max_input_chars_per_word
 
-    def tokenize(self, text):
+    def tokenize(self, text: str) -> List[str]:
         """Tokenizes a piece of text into its word pieces.
 
         This uses a greedy longest-match-first algorithm to perform tokenization
@@ -289,7 +292,7 @@ class WordpieceTokenizer(object):
         return output_tokens
 
 
-def _is_whitespace(char):
+def _is_whitespace(char: str) -> bool:
     """Checks whether `chars` is a whitespace character."""
     # \t, \n, and \r are technically control characters but we treat them
     # as whitespace since they are generally considered as such.
@@ -301,7 +304,7 @@ def _is_whitespace(char):
     return False
 
 
-def _is_control(char):
+def _is_control(char: str) -> bool:
     """Checks whether `chars` is a control character."""
     # These are technically control characters but we count them as whitespace
     # characters.
@@ -313,7 +316,7 @@ def _is_control(char):
     return False
 
 
-def _is_punctuation(char):
+def _is_punctuation(char: str) -> bool:
     """Checks whether `chars` is a punctuation character."""
     cp = ord(char)
     # We treat all non-letter/number ASCII as punctuation.
