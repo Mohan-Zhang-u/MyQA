@@ -22,7 +22,7 @@ if __name__ == "__main__":
         my_dict["doc_scores"] = doc_scores.tolist()
         with codecs.open(args.retrieved_json_path, 'w', encoding='utf-8') as fp:
             json.dump(my_dict, fp)
-    except Exception as e:
+    except* Exception as e:
         # Provide fine-grained error locations in tracebacks
         import traceback
         tb_str = ''.join(traceback.format_exception(e))
