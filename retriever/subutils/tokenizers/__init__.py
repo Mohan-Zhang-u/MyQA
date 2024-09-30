@@ -6,7 +6,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
-from typing import TypeVar, Callable, Any
+from typing import TypeVar, Callable, Any, Self
 
 DEFAULTS = {
     'corenlp_classpath': os.getenv('CLASSPATH')
