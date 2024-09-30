@@ -74,7 +74,7 @@ def generate_multi_test_cases(list_of_paragraphs, list_of_questions, document_re
         data.append({"title": "", "paragraphs": [new_paragraph]})  # here we can have multiple paragraph in paragraphs
 
     with codecs.open(document_reader_json_path, 'w', encoding='utf-8') as fp:
-        json.dump(jsondict, fp)
+        json.dump(jsondict, fp, ensure_ascii=False, indent=4)
 
 
 def pipeline(corpus_path, retrieved_json_path, document_reader_json_path, question):
