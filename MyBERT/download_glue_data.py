@@ -20,7 +20,7 @@ import shutil
 import argparse
 import urllib.request
 import zipfile
-from typing import List, LiteralString
+from typing import List, Literal
 
 TASKS = ["CoLA", "SST", "MRPC", "QQP", "STS", "MNLI", "SNLI", "QNLI", "RTE", "WNLI", "diagnostic"]
 TASK2PATH = {"CoLA":'https://firebasestorage.googleapis.com/v0/b/mtl-sentence-representations.appspot.com/o/data%2FCoLA.zip?alt=media&token=46d5e637-3411-4188-bc44-5809b5bfb5f4',
@@ -38,7 +38,7 @@ TASK2PATH = {"CoLA":'https://firebasestorage.googleapis.com/v0/b/mtl-sentence-re
 MRPC_TRAIN = 'https://s3.amazonaws.com/senteval/senteval_data/msr_paraphrase_train.txt'
 MRPC_TEST = 'https://s3.amazonaws.com/senteval/senteval_data/msr_paraphrase_test.txt'
 
-def download_and_extract(task: LiteralString, data_dir: LiteralString) -> None:
+def download_and_extract(task: Literal, data_dir: str) -> None:
     print(f"Downloading and extracting {task}...")
     data_file = f"{task}.zip"
     urllib.request.urlretrieve(TASK2PATH[task], data_file)
@@ -47,7 +47,7 @@ def download_and_extract(task: LiteralString, data_dir: LiteralString) -> None:
     os.remove(data_file)
     print("\tCompleted!")
 
-def format_mrpc(data_dir: LiteralString, path_to_data: LiteralString) -> None:
+def format_mrpc(data_dir: str, path_to_data: str) -> None:
     print("Processing MRPC...")
     mrpc_dir = os.path.join(data_dir, "MRPC")
     if not os.path.isdir(mrpc_dir):
@@ -91,7 +91,7 @@ def format_mrpc(data_dir: LiteralString, path_to_data: LiteralString) -> None:
             test_fh.write(f"{idx}\t{id1}\t{id2}\t{s1}\t{s2}\n")
     print("\tCompleted!")
 
-def download_diagnostic(data_dir: LiteralString) -> None:
+def download_diagnostic(data_dir: str) -> None:
     print("Downloading and extracting diagnostic...")
     if not os.path.isdir(os.path.join(data_dir, "diagnostic")):
         os.mkdir(os.path.join(data_dir, "diagnostic"))
@@ -100,7 +100,7 @@ def download_diagnostic(data_dir: LiteralString) -> None:
     print("\tCompleted!")
     return
 
-def get_tasks(task_names: LiteralString) -> List[str]:
+def get_tasks(task_names: str) -> List[str]:
     task_names = task_names.split(',')
     if "all" in task_names:
         tasks = TASKS
