@@ -82,17 +82,18 @@ def pipeline(corpus_path, retrieved_json_path, document_reader_json_path, questi
     doc_names = {}
     with codecs.open(retrieved_json_path, 'r', encoding='utf-8') as fpr:
         doc_names = json.load(fpr)
-    doc_names=doc_names["doc_names"]
+    doc_names = doc_names["doc_names"]
     for doc_name in doc_names:
-        with codecs.open(corpus_path + '/' + doc_name, 'r', encoding='utf-8') as fprc:
+        with codecs.open(os.path.join(corpus_path, doc_name), 'r', encoding='utf-8') as fprc:
             content = fprc.read()
             document += content
             document += os.linesep
             document += os.linesep
-    document=format_paragraph(document)
-    list_of_paragraphs=[document]
-    list_of_questions=[question]
+    document = format_paragraph(document)
+    list_of_paragraphs = [document]
+    list_of_questions = [question]
     generate_multi_test_cases(list_of_paragraphs, list_of_questions, document_reader_json_path)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
