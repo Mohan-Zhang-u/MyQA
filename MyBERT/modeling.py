@@ -4,7 +4,7 @@ import math
 import re
 import tensorflow as tf
 import six
-from typing import TypeVar, Generic, List, Tuple, Optional
+from typing import TypeVar, Generic, List, Tuple, Optional, Type
 
 # Define variadic generics
 T = TypeVar('T')
@@ -144,6 +144,13 @@ class BertModel(Generic[Ts]):
 
     def get_embedding_table(self) -> tf.Tensor:
         return self.embedding_table
+
+    @classmethod
+    def from_config(cls: Type['BertModel'], config: T, is_training: bool, input_ids: tf.Tensor,
+                    input_mask: Optional[tf.Tensor] = None, token_type_ids: Optional[tf.Tensor] = None,
+                    use_one_hot_embeddings: bool = True, scope: Optional[str] = None) -> 'BertModel':
+        """Alternative constructor to create a BertModel instance from a config."""
+        return cls(config, is_training, input_ids, input_mask, token_type_ids, use_one_hot_embeddings, scope)
 
 
 def gelu(input_tensor: tf.Tensor) -> tf.Tensor:
