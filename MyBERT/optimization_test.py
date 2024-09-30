@@ -49,5 +49,6 @@ class OptimizationTest(tf.test.TestCase):
 if __name__ == "__main__":
     try:
         tf.test.main()
-    except* Exception as e:
+    except Exception as e:
+        e.add_note("An error occurred during the test execution.")
         print(f"An error occurred: {e}")
