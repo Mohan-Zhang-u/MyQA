@@ -7,9 +7,9 @@
 """Base tokenizer/tokens classes and utilities."""
 
 import copy
+from typing import List, Tuple, Optional, Callable, Any
 
-
-class Tokens(object):
+class Tokens:
     """A class to represent a list of tokenized text."""
     TEXT = 0
     TEXT_WS = 1
@@ -18,26 +18,26 @@ class Tokens(object):
     LEMMA = 4
     NER = 5
 
-    def __init__(self, data, annotators, opts=None):
+    def __init__(self, data: List[Tuple], annotators: set, opts: Optional[dict] = None):
         self.data = data
         self.annotators = annotators
         self.opts = opts or {}
 
-    def __len__(self):
+    def __len__(self) -> int:
         """The number of tokens."""
         return len(self.data)
 
-    def slice(self, i=None, j=None):
+    def slice(self, i: Optional[int] = None, j: Optional[int] = None) -> 'Tokens':
         """Return a view of the list of tokens from [i, j)."""
         new_tokens = copy.copy(self)
         new_tokens.data = self.data[i: j]
         return new_tokens
 
-    def untokenize(self):
+    def untokenize(self) -> str:
         """Returns the original text (with whitespace reinserted)."""
         return ''.join([t[self.TEXT_WS] for t in self.data]).strip()
 
-    def words(self, uncased=False):
+    def words(self, uncased: bool = False) -> List[str]:
         """Returns a list of the text of each token
 
         Args:
@@ -48,11 +48,11 @@ class Tokens(object):
         else:
             return [t[self.TEXT] for t in self.data]
 
-    def offsets(self):
+    def offsets(self) -> List[Tuple[int, int]]:
         """Returns a list of [start, end) character offsets of each token."""
         return [t[self.SPAN] for t in self.data]
 
-    def pos(self):
+    def pos(self) -> Optional[List[str]]:
         """Returns a list of part-of-speech tags of each token.
         Returns None if this annotation was not included.
         """
@@ -60,7 +60,7 @@ class Tokens(object):
             return None
         return [t[self.POS] for t in self.data]
 
-    def lemmas(self):
+    def lemmas(self) -> Optional[List[str]]:
         """Returns a list of the lemmatized text of each token.
         Returns None if this annotation was not included.
         """
@@ -68,7 +68,7 @@ class Tokens(object):
             return None
         return [t[self.LEMMA] for t in self.data]
 
-    def entities(self):
+    def entities(self) -> Optional[List[str]]:
         """Returns a list of named-entity-recognition tags of each token.
         Returns None if this annotation was not included.
         """
@@ -76,7 +76,7 @@ class Tokens(object):
             return None
         return [t[self.NER] for t in self.data]
 
-    def ngrams(self, n=1, uncased=False, filter_fn=None, as_strings=True):
+    def ngrams(self, n: int = 1, uncased: bool = False, filter_fn: Optional[Callable[[List[str]], bool]] = None, as_strings: bool = True) -> List[Any]:
         """Returns a list of all ngrams from length 1 to n.
 
         Args:
@@ -86,7 +86,7 @@ class Tokens(object):
               True or False to keep or not keep the ngram
             as_string: return the ngram as a string vs list
         """
-        def _skip(gram):
+        def _skip(gram: List[str]) -> bool:
             if not filter_fn:
                 return False
             return filter_fn(gram)
@@ -103,7 +103,7 @@ class Tokens(object):
 
         return ngrams
 
-    def entity_groups(self):
+    def entity_groups(self) -> Optional[List[Tuple[str, str]]]:
         """Group consecutive entity tokens with the same NER tag."""
         entities = self.entities()
         if not entities:
@@ -125,18 +125,18 @@ class Tokens(object):
         return groups
 
 
-class Tokenizer(object):
+class Tokenizer:
     """Base tokenizer class.
     Tokenizers implement tokenize, which should return a Tokens class.
     """
-    def tokenize(self, text):
+    def tokenize(self, text: str) -> Tokens:
         try:
             raise NotImplementedError("The 'tokenize' method must be implemented by subclasses.")
         except NotImplementedError as e:
             e.add_note("Ensure that the subclass implements the 'tokenize' method.")
             raise
 
-    def shutdown(self):
+    def shutdown(self) -> None:
         pass
 
     def __del__(self):
