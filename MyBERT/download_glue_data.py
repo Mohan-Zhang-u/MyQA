@@ -39,8 +39,8 @@ MRPC_TRAIN = 'https://s3.amazonaws.com/senteval/senteval_data/msr_paraphrase_tra
 MRPC_TEST = 'https://s3.amazonaws.com/senteval/senteval_data/msr_paraphrase_test.txt'
 
 def download_and_extract(task, data_dir):
-    print("Downloading and extracting %s..." % task)
-    data_file = "%s.zip" % task
+    print(f"Downloading and extracting {task}...")
+    data_file = f"{task}.zip"
     urllib.request.urlretrieve(TASK2PATH[task], data_file)
     with zipfile.ZipFile(data_file) as zip_ref:
         zip_ref.extractall(data_dir)
@@ -60,8 +60,8 @@ def format_mrpc(data_dir, path_to_data):
         mrpc_test_file = os.path.join(mrpc_dir, "msr_paraphrase_test.txt")
         urllib.request.urlretrieve(MRPC_TRAIN, mrpc_train_file)
         urllib.request.urlretrieve(MRPC_TEST, mrpc_test_file)
-    assert os.path.isfile(mrpc_train_file), "Train data not found at %s" % mrpc_train_file
-    assert os.path.isfile(mrpc_test_file), "Test data not found at %s" % mrpc_test_file
+    assert os.path.isfile(mrpc_train_file), f"Train data not found at {mrpc_train_file}"
+    assert os.path.isfile(mrpc_test_file), f"Test data not found at {mrpc_test_file}"
     urllib.request.urlretrieve(TASK2PATH["MRPC"], os.path.join(mrpc_dir, "dev_ids.tsv"))
 
     dev_ids = []
@@ -78,9 +78,9 @@ def format_mrpc(data_dir, path_to_data):
         for row in data_fh:
             label, id1, id2, s1, s2 = row.strip().split('\t')
             if [id1, id2] in dev_ids:
-                dev_fh.write("%s\t%s\t%s\t%s\t%s\n" % (label, id1, id2, s1, s2))
+                dev_fh.write(f"{label}\t{id1}\t{id2}\t{s1}\t{s2}\n")
             else:
-                train_fh.write("%s\t%s\t%s\t%s\t%s\n" % (label, id1, id2, s1, s2))
+                train_fh.write(f"{label}\t{id1}\t{id2}\t{s1}\t{s2}\n")
 
     with open(mrpc_test_file) as data_fh, \
             open(os.path.join(mrpc_dir, "test.tsv"), 'w') as test_fh:
@@ -88,7 +88,7 @@ def format_mrpc(data_dir, path_to_data):
         test_fh.write("index\t#1 ID\t#2 ID\t#1 String\t#2 String\n")
         for idx, row in enumerate(data_fh):
             label, id1, id2, s1, s2 = row.strip().split('\t')
-            test_fh.write("%d\t%s\t%s\t%s\t%s\n" % (idx, id1, id2, s1, s2))
+            test_fh.write(f"{idx}\t{id1}\t{id2}\t{s1}\t{s2}\n")
     print("\tCompleted!")
 
 def download_diagnostic(data_dir):
@@ -107,7 +107,7 @@ def get_tasks(task_names):
     else:
         tasks = []
         for task_name in task_names:
-            assert task_name in TASKS, "Task %s not found!" % task_name
+            assert task_name in TASKS, f"Task {task_name} not found!"
             tasks.append(task_name)
     return tasks
 
