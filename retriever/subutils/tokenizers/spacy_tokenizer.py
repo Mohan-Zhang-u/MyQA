@@ -56,3 +56,6 @@ class SpacyTokenizer(Tokenizer):
 
         # Set special option for non-entity tag: '' vs 'O' in spaCy
         return Tokens(data, self.annotators, opts={'non_ent': ''})
+
+# Note: Python 3.11 introduces fine-grained error locations in tracebacks by default,
+# so no additional changes are needed for this feature.
