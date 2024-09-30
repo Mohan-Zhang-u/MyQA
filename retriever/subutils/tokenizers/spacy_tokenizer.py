@@ -34,7 +34,11 @@ class SpacyTokenizer(Tokenizer):
     def tokenize(self, text):
         # We don't treat new lines as tokens.
         clean_text = text.replace('\n', ' ')
-        tokens = self.nlp(clean_text)
+        try:
+            tokens = self.nlp(clean_text)
+        except Exception as e:
+            e.add_note("Error occurred while tokenizing text with spaCy.")
+            raise
 
         data = []
         for i in range(len(tokens)):
