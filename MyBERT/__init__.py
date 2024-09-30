@@ -29,3 +29,18 @@ except* Exception as e:
     # handle other exceptions
     e.add_note("Handling other exceptions.")
     pass
+
+# Example of using the Self type for accurate type hints in class methods
+from typing import Self
+
+class ExampleClass:
+    def __init__(self, value: int):
+        self.value = value
+
+    def increment(self) -> Self:
+        self.value += 1
+        return self
+
+    def decrement(self) -> Self:
+        self.value -= 1
+        return self
