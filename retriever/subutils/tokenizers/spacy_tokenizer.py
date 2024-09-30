@@ -12,7 +12,7 @@ Requires spaCy package and the spaCy english model.
 import spacy
 import copy
 from .tokenizer import Tokens, Tokenizer
-from typing import TypeVar, Generic, Set, Tuple, Any, List, Self
+from typing import TypeVar, Generic, Set, Tuple, Any, List, LiteralString
 
 # Define a variadic generic type variable
 Ts = TypeVar('Ts')
@@ -25,7 +25,7 @@ class SpacyTokenizer(Tokenizer, Generic[Ts]):
             annotators: set that can include pos, lemma, and ner.
             model: spaCy model to use (either path, or keyword like 'en').
         """
-        model = kwargs.get('model', 'en')
+        model: LiteralString = kwargs.get('model', 'en')
         self.annotators: Set[str] = copy.deepcopy(kwargs.get('annotators', set()))
         nlp_kwargs = {'disable': ['parser']}
         if not any([p in self.annotators for p in ['lemma', 'pos', 'ner']]):
