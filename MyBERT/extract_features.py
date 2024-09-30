@@ -320,23 +320,27 @@ def read_examples(input_file):
   """Read a list of `InputExample`s from an input file."""
   examples = []
   unique_id = 0
-  with tf.io.gfile.GFile(input_file, "r") as reader:
-    while True:
-      line = tokenization.convert_to_unicode(reader.readline())
-      if not line:
-        break
-      line = line.strip()
-      text_a = None
-      text_b = None
-      m = re.match(r"^(.*) \|\|\| (.*)$", line)
-      if m is None:
-        text_a = line
-      else:
-        text_a = m.group(1)
-        text_b = m.group(2)
-      examples.append(
-          InputExample(unique_id=unique_id, text_a=text_a, text_b=text_b))
-      unique_id += 1
+  try:
+    with tf.io.gfile.GFile(input_file, "r") as reader:
+      while True:
+        line = tokenization.convert_to_unicode(reader.readline())
+        if not line:
+          break
+        line = line.strip()
+        text_a = None
+        text_b = None
+        m = re.match(r"^(.*) \|\|\| (.*)$", line)
+        if m is None:
+          text_a = line
+        else:
+          text_a = m.group(1)
+          text_b = m.group(2)
+        examples.append(
+            InputExample(unique_id=unique_id, text_a=text_a, text_b=text_b))
+        unique_id += 1
+  except Exception as e:
+    e.add_note(f"Error reading examples from file: {input_file}")
+    raise
   return examples
 
 
@@ -345,7 +349,11 @@ def main(_):
 
   layer_indexes = [int(x) for x in FLAGS.layers.split(",")]
 
-  bert_config = modeling.BertConfig.from_json_file(FLAGS.bert_config_file)
+  try:
+    bert_config = modeling.BertConfig.from_json_file(FLAGS.bert_config_file)
+  except Exception as e:
+    e.add_note(f"Error loading BERT config from file: {FLAGS.bert_config_file}")
+    raise
 
   tokenizer = tokenization.FullTokenizer(
       vocab_file=FLAGS.vocab_file, do_lower_case=FLAGS.do_lower_case)
@@ -384,30 +392,34 @@ def main(_):
   input_fn = input_fn_builder(
       features=features, seq_length=FLAGS.max_seq_length)
 
-  with codecs.getwriter("utf-8")(tf.io.gfile.GFile(FLAGS.output_file,
-                                                   "w")) as writer:
-    for result in estimator.predict(input_fn, yield_single_examples=True):
-      unique_id = int(result["unique_id"])
-      feature = unique_id_to_feature[unique_id]
-      output_json = collections.OrderedDict()
-      output_json["linex_index"] = unique_id
-      all_features = []
-      for (i, token) in enumerate(feature.tokens):
-        all_layers = []
-        for (j, layer_index) in enumerate(layer_indexes):
-          layer_output = result["layer_output_%d" % j]
-          layers = collections.OrderedDict()
-          layers["index"] = layer_index
-          layers["values"] = [
-              round(float(x), 6) for x in layer_output[i:(i + 1)].flat
-          ]
-          all_layers.append(layers)
-        features = collections.OrderedDict()
-        features["token"] = token
-        features["layers"] = all_layers
-        all_features.append(features)
-      output_json["features"] = all_features
-      writer.write(json.dumps(output_json) + "\n")
+  try:
+    with codecs.getwriter("utf-8")(tf.io.gfile.GFile(FLAGS.output_file,
+                                                     "w")) as writer:
+      for result in estimator.predict(input_fn, yield_single_examples=True):
+        unique_id = int(result["unique_id"])
+        feature = unique_id_to_feature[unique_id]
+        output_json = collections.OrderedDict()
+        output_json["linex_index"] = unique_id
+        all_features = []
+        for (i, token) in enumerate(feature.tokens):
+          all_layers = []
+          for (j, layer_index) in enumerate(layer_indexes):
+            layer_output = result["layer_output_%d" % j]
+            layers = collections.OrderedDict()
+            layers["index"] = layer_index
+            layers["values"] = [
+                round(float(x), 6) for x in layer_output[i:(i + 1)].flat
+            ]
+            all_layers.append(layers)
+          features = collections.OrderedDict()
+          features["token"] = token
+          features["layers"] = all_layers
+          all_features.append(features)
+        output_json["features"] = all_features
+        writer.write(json.dumps(output_json) + "\n")
+  except Exception as e:
+    e.add_note(f"Error writing predictions to file: {FLAGS.output_file}")
+    raise
 
 
 if __name__ == "__main__":
