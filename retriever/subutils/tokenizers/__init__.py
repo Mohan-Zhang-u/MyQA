@@ -6,13 +6,15 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
+from typing import TypeVar, Callable, Any
 
 DEFAULTS = {
     'corenlp_classpath': os.getenv('CLASSPATH')
 }
 
+T = TypeVar('T')
 
-def set_default(key, value):
+def set_default(key: str, value: Any) -> None:
     global DEFAULTS
     DEFAULTS[key] = value
 
@@ -28,7 +30,7 @@ except ImportError:
     pass
 
 
-def get_class(name):
+def get_class(name: str) -> Callable[..., T]:
     if name == 'spacy':
         return SpacyTokenizer
     if name == 'corenlp':
@@ -43,7 +45,7 @@ def get_class(name):
     raise error
 
 
-def get_annotators_for_args(args):
+def get_annotators_for_args(args: Any) -> set[str]:
     annotators = set()
     if args.use_pos:
         annotators.add('pos')
@@ -54,5 +56,5 @@ def get_annotators_for_args(args):
     return annotators
 
 
-def get_annotators_for_model(model):
+def get_annotators_for_model(model: Any) -> set[str]:
     return get_annotators_for_args(model.args)
