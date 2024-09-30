@@ -12,6 +12,7 @@ import argparse
 import os
 import math
 import logging
+from typing import LiteralString
 
 from multiprocessing import Pool as ProcessPool
 from multiprocessing.util import Finalize
@@ -95,7 +96,7 @@ def count(ngram: int, hash_size: int, doc_id: str) -> tuple[list[int], list[int]
     return row, col, data
 
 
-def get_count_matrix(args: argparse.Namespace, db: str, db_opts: dict) -> tuple[sp.csr_matrix, tuple[dict[str, int], list[str]]]:
+def get_count_matrix(args: argparse.Namespace, db: LiteralString, db_opts: dict) -> tuple[sp.csr_matrix, tuple[dict[str, int], list[str]]]:
     """Form a sparse word to document count matrix (inverted index).
 
     M[i, j] = # times word i appears in document j.
