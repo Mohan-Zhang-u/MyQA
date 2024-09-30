@@ -9,7 +9,7 @@
 import sqlite3
 from . import utils
 from . import DEFAULTS
-from typing import TypeVar, Generic, List, Optional
+from typing import TypeVar, Generic, List, Optional, Self
 
 T = TypeVar('T')
 
@@ -23,7 +23,7 @@ class DocDB(Generic[T]):
         self.path = db_path or DEFAULTS['db_path']
         self.connection = sqlite3.connect(self.path, check_same_thread=False)
 
-    def __enter__(self) -> 'DocDB':
+    def __enter__(self) -> Self:
         return self
 
     def __exit__(self, *args) -> None:
