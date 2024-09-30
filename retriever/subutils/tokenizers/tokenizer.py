@@ -7,7 +7,7 @@
 """Base tokenizer/tokens classes and utilities."""
 
 import copy
-from typing import List, Tuple, Optional, Callable, Any, Self
+from typing import List, Tuple, Optional, Callable, Any, Self, LiteralString
 
 class Tokens:
     """A class to represent a list of tokenized text."""
@@ -129,7 +129,7 @@ class Tokenizer:
     """Base tokenizer class.
     Tokenizers implement tokenize, which should return a Tokens class.
     """
-    def tokenize(self, text: str) -> Tokens:
+    def tokenize(self, text: LiteralString) -> Tokens:
         try:
             raise NotImplementedError("The 'tokenize' method must be implemented by subclasses.")
         except NotImplementedError as e:
