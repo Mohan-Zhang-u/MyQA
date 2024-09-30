@@ -26,4 +26,5 @@ if __name__ == "__main__":
         # Provide fine-grained error locations in tracebacks
         import traceback
         tb_str = ''.join(traceback.format_exception(e))
+        e.add_note("An error occurred during the document retrieval process.")
         print(f"An error occurred: {e}\nTraceback:\n{tb_str}")
