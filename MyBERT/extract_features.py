@@ -22,7 +22,7 @@ import codecs
 import collections
 import json
 import re
-from typing import Required, NotRequired
+from typing import Self
 
 import modeling
 import tokenization
@@ -85,6 +85,9 @@ class InputExample:
         self.text_a = text_a
         self.text_b = text_b
 
+    def __repr__(self) -> Self:
+        return f"InputExample(unique_id={self.unique_id}, text_a={self.text_a}, text_b={self.text_b})"
+
 
 class InputFeatures:
     """A single set of features of data."""
@@ -95,6 +98,11 @@ class InputFeatures:
         self.input_ids = input_ids
         self.input_mask = input_mask
         self.input_type_ids = input_type_ids
+
+    def __repr__(self) -> Self:
+        return (f"InputFeatures(unique_id={self.unique_id}, tokens={self.tokens}, "
+                f"input_ids={self.input_ids}, input_mask={self.input_mask}, "
+                f"input_type_ids={self.input_type_ids})")
 
 
 def input_fn_builder(features: list[InputFeatures], seq_length: int):
