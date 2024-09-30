@@ -12,6 +12,7 @@ and requires minimal dependencies.
 
 import regex
 import logging
+from typing import Self, LiteralString
 from .tokenizer import Tokens, Tokenizer
 
 logger = logging.getLogger(__name__)
@@ -60,7 +61,7 @@ class RegexpTokenizer(Tokenizer):
         self.annotators = set()
         self.substitutions = kwargs.get('substitutions', True)
 
-    def tokenize(self, text: str) -> Tokens:
+    def tokenize(self, text: LiteralString) -> Tokens:
         data = []
         try:
             matches = [m for m in self._regexp.finditer(text)]
