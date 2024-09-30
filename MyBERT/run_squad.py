@@ -28,7 +28,7 @@ import optimization
 import tokenization
 import six
 import tensorflow as tf
-from typing import List, Tuple, Dict, Any, Callable, TypeVar
+from typing import List, Tuple, Dict, Any, Callable, TypeVar, LiteralString
 
 Self = TypeVar('Self', bound='SquadExample')
 
@@ -227,7 +227,7 @@ class InputFeatures:
     self.is_impossible = is_impossible
 
 
-def read_squad_examples(input_file: str, is_training: bool) -> List[SquadExample]:
+def read_squad_examples(input_file: LiteralString, is_training: bool) -> List[SquadExample]:
   """Read a SQuAD json file into a list of SquadExample."""
   with tf.io.gfile.GFile(input_file, "r") as reader:
     input_data = json.load(reader)["data"]
@@ -590,7 +590,7 @@ def create_model(bert_config: modeling.BertConfig, is_training: bool, input_ids:
   return (start_logits, end_logits)
 
 
-def model_fn_builder(bert_config: modeling.BertConfig, init_checkpoint: str, learning_rate: float,
+def model_fn_builder(bert_config: modeling.BertConfig, init_checkpoint: LiteralString, learning_rate: float,
                      num_train_steps: int, num_warmup_steps: int, use_tpu: bool,
                      use_one_hot_embeddings: bool) -> Callable[..., tf.compat.v1.estimator.tpu.TPUEstimatorSpec]:
   """Returns `model_fn` closure for TPUEstimator."""
@@ -687,7 +687,7 @@ def model_fn_builder(bert_config: modeling.BertConfig, init_checkpoint: str, lea
   return model_fn
 
 
-def input_fn_builder(input_file: str, seq_length: int, is_training: bool, drop_remainder: bool) -> Callable[..., tf.data.Dataset]:
+def input_fn_builder(input_file: LiteralString, seq_length: int, is_training: bool, drop_remainder: bool) -> Callable[..., tf.data.Dataset]:
   """Creates an `input_fn` closure to be passed to TPUEstimator."""
 
   name_to_features = {
@@ -742,8 +742,8 @@ RawResult = collections.namedtuple("RawResult",
 
 
 def write_predictions(all_examples: List[SquadExample], all_features: List[InputFeatures], all_results: List[RawResult], n_best_size: int,
-                      max_answer_length: int, do_lower_case: bool, output_prediction_file: str,
-                      output_nbest_file: str, output_null_log_odds_file: str) -> None:
+                      max_answer_length: int, do_lower_case: bool, output_prediction_file: LiteralString,
+                      output_nbest_file: LiteralString, output_null_log_odds_file: LiteralString) -> None:
   """Write final predictions to the json file and log-odds of null if needed."""
   tf.compat.v1.logging.info("Writing predictions to: %s" % (output_prediction_file))
   tf.compat.v1.logging.info("Writing nbest to: %s" % (output_nbest_file))
@@ -1061,7 +1061,7 @@ def _compute_softmax(scores: List[float]) -> List[float]:
 class FeatureWriter:
   """Writes InputFeature to TF example file."""
 
-  def __init__(self, filename: str, is_training: bool):
+  def __init__(self, filename: LiteralString, is_training: bool):
     self.filename = filename
     self.is_training = is_training
     self.num_features = 0
