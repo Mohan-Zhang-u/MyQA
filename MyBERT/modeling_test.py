@@ -20,7 +20,7 @@ import collections
 import json
 import random
 import re
-from typing import TypeVar, Generic, List, Tuple, Dict, Any
+from typing import TypeVar, Generic, List, Tuple, Dict, Any, Self
 
 import modeling
 import six
