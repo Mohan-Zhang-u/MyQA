@@ -1,6 +1,6 @@
 import json
 import codecs
-from typing import List
+from typing import List, Self
 
 # The structure looks like this:
 # SQuAD:https://rajpurkar.github.io/SQuAD-explorer/
