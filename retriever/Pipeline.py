@@ -90,7 +90,8 @@ def pipeline(corpus_path, retrieved_json_path, document_reader_json_path, questi
                 document += content
                 document += os.linesep
                 document += os.linesep
-    except* (FileNotFoundError, json.JSONDecodeError) as e:
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        e.add_note(f"Error processing files: {e}")
         print(f"Error processing files: {e}")
         return
 
