@@ -130,7 +130,11 @@ class Tokenizer(object):
     Tokenizers implement tokenize, which should return a Tokens class.
     """
     def tokenize(self, text):
-        raise NotImplementedError
+        try:
+            raise NotImplementedError("The 'tokenize' method must be implemented by subclasses.")
+        except NotImplementedError as e:
+            e.add_note("Ensure that the subclass implements the 'tokenize' method.")
+            raise
 
     def shutdown(self):
         pass
