@@ -20,7 +20,10 @@ def get_class(name):
         return TfidfDocRanker
     if name == 'sqlite':
         return DocDB
-    raise RuntimeError(f'Invalid retriever class: {name}')
+    # Enriching the exception with additional details using .add_note()
+    error = RuntimeError(f'Invalid retriever class: {name}')
+    error.add_note("Ensure that the class name is either 'tfidf' or 'sqlite'.")
+    raise error
 
 from .doc_db import DocDB
 from .tfidf_doc_ranker import TfidfDocRanker
