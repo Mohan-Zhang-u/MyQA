@@ -28,6 +28,7 @@ import optimization
 import tokenization
 import six
 import tensorflow as tf
+from typing import List, Tuple, Dict, Any, Callable
 
 flags = tf.compat.v1.flags
 
@@ -154,20 +155,20 @@ flags.DEFINE_float(
     "If null_score - best_non_null is greater than the threshold predict null.")
 
 
-class SquadExample(object):
+class SquadExample:
   """A single training/test example for simple sequence classification.
 
      For examples without an answer, the start and end position are -1.
   """
 
   def __init__(self,
-               qas_id,
-               question_text,
-               doc_tokens,
-               orig_answer_text=None,
-               start_position=None,
-               end_position=None,
-               is_impossible=False):
+               qas_id: str,
+               question_text: str,
+               doc_tokens: List[str],
+               orig_answer_text: str = None,
+               start_position: int = None,
+               end_position: int = None,
+               is_impossible: bool = False):
     self.qas_id = qas_id
     self.question_text = question_text
     self.doc_tokens = doc_tokens
@@ -176,10 +177,10 @@ class SquadExample(object):
     self.end_position = end_position
     self.is_impossible = is_impossible
 
-  def __str__(self):
+  def __str__(self) -> str:
     return self.__repr__()
 
-  def __repr__(self):
+  def __repr__(self) -> str:
     s = ""
     s += "qas_id: %s" % (tokenization.printable_text(self.qas_id))
     s += ", question_text: %s" % (
@@ -194,22 +195,22 @@ class SquadExample(object):
     return s
 
 
-class InputFeatures(object):
+class InputFeatures:
   """A single set of features of data."""
 
   def __init__(self,
-               unique_id,
-               example_index,
-               doc_span_index,
-               tokens,
-               token_to_orig_map,
-               token_is_max_context,
-               input_ids,
-               input_mask,
-               segment_ids,
-               start_position=None,
-               end_position=None,
-               is_impossible=None):
+               unique_id: int,
+               example_index: int,
+               doc_span_index: int,
+               tokens: List[str],
+               token_to_orig_map: Dict[int, int],
+               token_is_max_context: Dict[int, bool],
+               input_ids: List[int],
+               input_mask: List[int],
+               segment_ids: List[int],
+               start_position: int = None,
+               end_position: int = None,
+               is_impossible: bool = None):
     self.unique_id = unique_id
     self.example_index = example_index
     self.doc_span_index = doc_span_index
@@ -224,12 +225,12 @@ class InputFeatures(object):
     self.is_impossible = is_impossible
 
 
-def read_squad_examples(input_file, is_training):
+def read_squad_examples(input_file: str, is_training: bool) -> List[SquadExample]:
   """Read a SQuAD json file into a list of SquadExample."""
   with tf.io.gfile.GFile(input_file, "r") as reader:
     input_data = json.load(reader)["data"]
 
-  def is_whitespace(c):
+  def is_whitespace(c: str) -> bool:
     if c == " " or c == "\t" or c == "\r" or c == "\n" or ord(c) == 0x202F:
       return True
     return False
@@ -306,9 +307,9 @@ def read_squad_examples(input_file, is_training):
   return examples
 
 
-def convert_examples_to_features(examples, tokenizer, max_seq_length,
-                                 doc_stride, max_query_length, is_training,
-                                 output_fn):
+def convert_examples_to_features(examples: List[SquadExample], tokenizer: tokenization.FullTokenizer, max_seq_length: int,
+                                 doc_stride: int, max_query_length: int, is_training: bool,
+                                 output_fn: Callable[[InputFeatures], None]) -> None:
   """Loads a data file into a list of `InputBatch`s."""
 
   unique_id = 1000000000
@@ -473,8 +474,8 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length,
       unique_id += 1
 
 
-def _improve_answer_span(doc_tokens, input_start, input_end, tokenizer,
-                         orig_answer_text):
+def _improve_answer_span(doc_tokens: List[str], input_start: int, input_end: int, tokenizer: tokenization.FullTokenizer,
+                         orig_answer_text: str) -> Tuple[int, int]:
   """Returns tokenized answer spans that better match the annotated answer."""
 
   # The SQuAD annotations are character based. We first project them to
@@ -510,7 +511,7 @@ def _improve_answer_span(doc_tokens, input_start, input_end, tokenizer,
   return (input_start, input_end)
 
 
-def _check_is_max_context(doc_spans, cur_span_index, position):
+def _check_is_max_context(doc_spans: List[Tuple[int, int]], cur_span_index: int, position: int) -> bool:
   """Check if this is the 'max context' doc span for the token."""
 
   # Because of the sliding window approach taken to scoring documents, a single
@@ -547,8 +548,8 @@ def _check_is_max_context(doc_spans, cur_span_index, position):
   return cur_span_index == best_span_index
 
 
-def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
-                 use_one_hot_embeddings):
+def create_model(bert_config: modeling.BertConfig, is_training: bool, input_ids: tf.Tensor, input_mask: tf.Tensor, segment_ids: tf.Tensor,
+                 use_one_hot_embeddings: bool) -> Tuple[tf.Tensor, tf.Tensor]:
   """Creates a classification model."""
   model = modeling.BertModel(
       config=bert_config,
@@ -587,12 +588,12 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
   return (start_logits, end_logits)
 
 
-def model_fn_builder(bert_config, init_checkpoint, learning_rate,
-                     num_train_steps, num_warmup_steps, use_tpu,
-                     use_one_hot_embeddings):
+def model_fn_builder(bert_config: modeling.BertConfig, init_checkpoint: str, learning_rate: float,
+                     num_train_steps: int, num_warmup_steps: int, use_tpu: bool,
+                     use_one_hot_embeddings: bool) -> Callable[..., tf.compat.v1.estimator.tpu.TPUEstimatorSpec]:
   """Returns `model_fn` closure for TPUEstimator."""
 
-  def model_fn(features, labels, mode, params):  # pylint: disable=unused-argument
+  def model_fn(features: Dict[str, tf.Tensor], labels: tf.Tensor, mode: tf.estimator.ModeKeys, params: Dict[str, Any]) -> tf.compat.v1.estimator.tpu.TPUEstimatorSpec:  # pylint: disable=unused-argument
     """The `model_fn` for TPUEstimator."""
 
     tf.compat.v1.logging.info("*** Features ***")
@@ -643,7 +644,7 @@ def model_fn_builder(bert_config, init_checkpoint, learning_rate,
     if mode == tf.estimator.ModeKeys.TRAIN:
       seq_length = modeling.get_shape_list(input_ids)[1]
 
-      def compute_loss(logits, positions):
+      def compute_loss(logits: tf.Tensor, positions: tf.Tensor) -> tf.Tensor:
         one_hot_positions = tf.one_hot(
             positions, depth=seq_length, dtype=tf.float32)
         log_probs = tf.nn.log_softmax(logits, axis=-1)
@@ -684,7 +685,7 @@ def model_fn_builder(bert_config, init_checkpoint, learning_rate,
   return model_fn
 
 
-def input_fn_builder(input_file, seq_length, is_training, drop_remainder):
+def input_fn_builder(input_file: str, seq_length: int, is_training: bool, drop_remainder: bool) -> Callable[..., tf.data.Dataset]:
   """Creates an `input_fn` closure to be passed to TPUEstimator."""
 
   name_to_features = {
@@ -698,7 +699,7 @@ def input_fn_builder(input_file, seq_length, is_training, drop_remainder):
     name_to_features["start_positions"] = tf.io.FixedLenFeature([], tf.int64)
     name_to_features["end_positions"] = tf.io.FixedLenFeature([], tf.int64)
 
-  def _decode_record(record, name_to_features):
+  def _decode_record(record: tf.Tensor, name_to_features: Dict[str, tf.io.FixedLenFeature]) -> Dict[str, tf.Tensor]:
     """Decodes a record to a TensorFlow example."""
     example = tf.io.parse_single_example(record, name_to_features)
 
@@ -712,7 +713,7 @@ def input_fn_builder(input_file, seq_length, is_training, drop_remainder):
 
     return example
 
-  def input_fn(params):
+  def input_fn(params: Dict[str, Any]) -> tf.data.Dataset:
     """The actual input function."""
     batch_size = params["batch_size"]
 
@@ -738,9 +739,9 @@ RawResult = collections.namedtuple("RawResult",
                                    ["unique_id", "start_logits", "end_logits"])
 
 
-def write_predictions(all_examples, all_features, all_results, n_best_size,
-                      max_answer_length, do_lower_case, output_prediction_file,
-                      output_nbest_file, output_null_log_odds_file):
+def write_predictions(all_examples: List[SquadExample], all_features: List[InputFeatures], all_results: List[RawResult], n_best_size: int,
+                      max_answer_length: int, do_lower_case: bool, output_prediction_file: str,
+                      output_nbest_file: str, output_null_log_odds_file: str) -> None:
   """Write final predictions to the json file and log-odds of null if needed."""
   tf.compat.v1.logging.info("Writing predictions to: %s" % (output_prediction_file))
   tf.compat.v1.logging.info("Writing nbest to: %s" % (output_nbest_file))
@@ -924,7 +925,7 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
       writer.write(json.dumps(scores_diff_json, indent=4) + "\n")
 
 
-def get_final_text(pred_text, orig_text, do_lower_case):
+def get_final_text(pred_text: str, orig_text: str, do_lower_case: bool) -> str:
   """Project the tokenized prediction back to the original text."""
 
   # When we created the data, we kept track of the alignment between original
@@ -952,7 +953,7 @@ def get_final_text(pred_text, orig_text, do_lower_case):
   # `pred_text` and `orig_text` to get a character-to-charcter alignment. This
   # can fail in certain cases in which case we just return `orig_text`.
 
-  def _strip_spaces(text):
+  def _strip_spaces(text: str) -> Tuple[str, Dict[int, int]]:
     ns_chars = []
     ns_to_s_map = collections.OrderedDict()
     for (i, c) in enumerate(text):
@@ -1020,7 +1021,7 @@ def get_final_text(pred_text, orig_text, do_lower_case):
   return output_text
 
 
-def _get_best_indexes(logits, n_best_size):
+def _get_best_indexes(logits: List[float], n_best_size: int) -> List[int]:
   """Get the n-best logits from a list."""
   index_and_score = sorted(enumerate(logits), key=lambda x: x[1], reverse=True)
 
@@ -1032,7 +1033,7 @@ def _get_best_indexes(logits, n_best_size):
   return best_indexes
 
 
-def _compute_softmax(scores):
+def _compute_softmax(scores: List[float]) -> List[float]:
   """Compute softmax probability over raw logits."""
   if not scores:
     return []
@@ -1055,20 +1056,20 @@ def _compute_softmax(scores):
   return probs
 
 
-class FeatureWriter(object):
+class FeatureWriter:
   """Writes InputFeature to TF example file."""
 
-  def __init__(self, filename, is_training):
+  def __init__(self, filename: str, is_training: bool):
     self.filename = filename
     self.is_training = is_training
     self.num_features = 0
     self._writer = tf.io.TFRecordWriter(filename)
 
-  def process_feature(self, feature):
+  def process_feature(self, feature: InputFeatures) -> None:
     """Write a InputFeature to the TFRecordWriter as a tf.train.Example."""
     self.num_features += 1
 
-    def create_int_feature(values):
+    def create_int_feature(values: List[int]) -> tf.train.Feature:
       feature = tf.train.Feature(
           int64_list=tf.train.Int64List(value=list(values)))
       return feature
@@ -1090,11 +1091,11 @@ class FeatureWriter(object):
     tf_example = tf.train.Example(features=tf.train.Features(feature=features))
     self._writer.write(tf_example.SerializeToString())
 
-  def close(self):
+  def close(self) -> None:
     self._writer.close()
 
 
-def validate_flags_or_throw(bert_config):
+def validate_flags_or_throw(bert_config: modeling.BertConfig) -> None:
   """Validate the input FLAGS or throw an exception."""
   if not FLAGS.do_train and not FLAGS.do_predict:
     raise ValueError("At least one of `do_train` or `do_predict` must be True.")
@@ -1120,7 +1121,7 @@ def validate_flags_or_throw(bert_config):
         "(%d) + 3" % (FLAGS.max_seq_length, FLAGS.max_query_length))
 
 
-def main(_):
+def main(_) -> None:
   tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.INFO)
 
   bert_config = modeling.BertConfig.from_json_file(FLAGS.bert_config_file)
@@ -1220,7 +1221,7 @@ def main(_):
         is_training=False)
     eval_features = []
 
-    def append_feature(feature):
+    def append_feature(feature: InputFeatures) -> None:
       eval_features.append(feature)
       eval_writer.process_feature(feature)
 
