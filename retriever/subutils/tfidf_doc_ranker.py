@@ -13,28 +13,33 @@ import scipy.sparse as sp
 from multiprocessing.pool import ThreadPool
 from functools import partial
 from typing import Self, LiteralString
+from dataclasses import dataclass, field
 
 from . import utils
 from . import tokenizers
 
 logger = logging.getLogger(__name__)
 
-
-class TfidfDocRanker(object):
+@dataclass
+class TfidfDocRanker:
     """Loads a pre-weighted inverted index of token/document terms.
     Scores new queries by taking sparse dot products.
     """
+    tfidf_path: LiteralString = None
+    strict: bool = True
+    doc_mat: sp.csr_matrix = field(init=False)
+    ngrams: int = field(init=False)
+    hash_size: int = field(init=False)
+    tokenizer: tokenizers.Tokenizer = field(init=False)
+    doc_freqs: np.ndarray = field(init=False)
+    doc_dict: dict = field(init=False)
+    num_docs: int = field(init=False)
 
-    def __init__(self, tfidf_path: LiteralString = None, strict: bool = True):
-        """
-        Args:
-            tfidf_path: path to saved model file
-            strict: fail on empty queries or continue (and return empty result)
-        """
+    def __post_init__(self):
         # Load from disk
-        tfidf_path = tfidf_path or DEFAULTS['tfidf_path']
-        logger.info('Loading %s' % tfidf_path)
-        matrix, metadata = utils.load_sparse_csr(tfidf_path)
+        self.tfidf_path = self.tfidf_path or DEFAULTS['tfidf_path']
+        logger.info('Loading %s' % self.tfidf_path)
+        matrix, metadata = utils.load_sparse_csr(self.tfidf_path)
         self.doc_mat = matrix
         self.ngrams = metadata['ngram']
         self.hash_size = metadata['hash_size']
@@ -42,7 +47,6 @@ class TfidfDocRanker(object):
         self.doc_freqs = metadata['doc_freqs'].squeeze()
         self.doc_dict = metadata['doc_dict']
         self.num_docs = len(self.doc_dict[0])
-        self.strict = strict
 
     def get_doc_index(self, doc_id: int) -> int:
         """Convert doc_id --> doc_index"""
