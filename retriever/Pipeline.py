@@ -3,6 +3,7 @@ import codecs
 import os
 import argparse
 from typing import List, Dict, Any, TypedDict, LiteralString
+from dataclasses import dataclass, field
 
 # The structure looks like this:
 # SQuAD:https://rajpurkar.github.io/SQuAD-explorer/
@@ -46,24 +47,29 @@ from typing import List, Dict, Any, TypedDict, LiteralString
 # answer_start=-1
 # text=""
 
-class Answer(TypedDict):
+@dataclass
+class Answer:
     answer_start: int
     text: str
 
-class QAS(TypedDict):
+@dataclass
+class QAS:
     answers: List[Answer]
     id: str
     question: str
 
-class Paragraph(TypedDict):
+@dataclass
+class Paragraph:
     context: str
     qas: List[QAS]
 
-class Data(TypedDict):
+@dataclass
+class Data:
     title: str
     paragraphs: List[Paragraph]
 
-class JSONDict(TypedDict):
+@dataclass
+class JSONDict:
     data: List[Data]
     version: str
 
@@ -83,19 +89,17 @@ def generate_multi_test_cases(list_of_paragraphs: List[str], list_of_questions: 
     data: List[Data] = []
     version = "my_ver"
 
-    jsondict: JSONDict = {}
-    jsondict["data"] = data
-    jsondict["version"] = version
+    jsondict: JSONDict = JSONDict(data=data, version=version)
 
     for j in range(length_of_them):
-        new_paragraph: Paragraph = {}
-        new_paragraph["context"] = list_of_paragraphs[j]
-        new_paragraph["qas"] = [{"answers": [{"answer_start": -1, "text": ""}], "question": list_of_questions[j],
-                                 "id": list_of_questions[j]}]
-        data.append({"title": "", "paragraphs": [new_paragraph]})  # here we can have multiple paragraph in paragraphs
+        new_paragraph = Paragraph(
+            context=list_of_paragraphs[j],
+            qas=[QAS(answers=[Answer(answer_start=-1, text="")], question=list_of_questions[j], id=list_of_questions[j])]
+        )
+        data.append(Data(title="", paragraphs=[new_paragraph]))  # here we can have multiple paragraph in paragraphs
 
     with codecs.open(document_reader_json_path, 'w', encoding='utf-8') as fp:
-        json.dump(jsondict, fp, ensure_ascii=False, indent=4)
+        json.dump(jsondict.__dict__, fp, ensure_ascii=False, indent=4)
 
 
 def pipeline(corpus_path: LiteralString, retrieved_json_path: LiteralString, document_reader_json_path: LiteralString, question: str) -> None:
