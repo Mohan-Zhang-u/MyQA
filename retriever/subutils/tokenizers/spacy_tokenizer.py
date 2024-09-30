@@ -12,18 +12,21 @@ Requires spaCy package and the spaCy english model.
 import spacy
 import copy
 from .tokenizer import Tokens, Tokenizer
+from typing import TypeVar, Generic, Set, Tuple, Any
 
+# Define a variadic generic type variable
+Ts = TypeVar('Ts')
 
-class SpacyTokenizer(Tokenizer):
+class SpacyTokenizer(Tokenizer, Generic[Ts]):
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """
         Args:
             annotators: set that can include pos, lemma, and ner.
             model: spaCy model to use (either path, or keyword like 'en').
         """
         model = kwargs.get('model', 'en')
-        self.annotators = copy.deepcopy(kwargs.get('annotators', set()))
+        self.annotators: Set[str] = copy.deepcopy(kwargs.get('annotators', set()))
         nlp_kwargs = {'disable': ['parser']}
         if not any([p in self.annotators for p in ['lemma', 'pos', 'ner']]):
             nlp_kwargs['disable'].append('tagger')
@@ -31,7 +34,7 @@ class SpacyTokenizer(Tokenizer):
             nlp_kwargs['disable'].append('ner')
         self.nlp = spacy.load(model, **nlp_kwargs)
 
-    def tokenize(self, text):
+    def tokenize(self, text: str) -> Tokens:
         # We don't treat new lines as tokens.
         clean_text = text.replace('\n', ' ')
         try:
@@ -40,7 +43,7 @@ class SpacyTokenizer(Tokenizer):
             e.add_note("Error occurred while tokenizing text with spaCy.")
             raise
 
-        data = []
+        data: List[Tuple[str, str, Tuple[int, int], str, str, str]] = []
         for i in range(len(tokens)):
             # Get whitespace
             start_ws = tokens[i].idx
