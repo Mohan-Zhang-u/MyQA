@@ -1,5 +1,6 @@
 import json
 import codecs
+from typing import List, Tuple
 
 # The structure looks like this:
 # SQuAD:https://rajpurkar.github.io/SQuAD-explorer/
@@ -21,7 +22,7 @@ import codecs
 # │       └── "title": "document id"
 # └── "version": 1.1
 
-def get_paragraph(filename):
+def get_paragraph(filename: str) -> str:
     try:
         with codecs.open('Paragraphs/' + filename, 'r', encoding='utf8') as fp:
             paragraph = fp.read()
@@ -35,7 +36,7 @@ def get_paragraph(filename):
         print(e)
         return ""
 
-def generate_multi_test_cases(list_of_paragraphs, list_of_questions, name_of_file):
+def generate_multi_test_cases(list_of_paragraphs: List[str], list_of_questions: List[str], name_of_file: str) -> None:
     assert len(list_of_paragraphs) == len(list_of_questions)
     length_of_them = len(list_of_paragraphs)
 
@@ -60,8 +61,8 @@ def generate_multi_test_cases(list_of_paragraphs, list_of_questions, name_of_fil
         print(e)
 
 if __name__ == "__main__":
-    list_of_paragraphs = []
-    list_of_questions = []
+    list_of_paragraphs: List[str] = []
+    list_of_questions: List[str] = []
     list_of_paragraphs.append(get_paragraph("imperial_short.txt"))
     list_of_questions.append("Imperial's income is growing or decreasing?")
     list_of_paragraphs.append(get_paragraph("imperial_short.txt"))
