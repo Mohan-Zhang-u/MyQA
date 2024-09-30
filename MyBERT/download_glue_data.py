@@ -132,6 +132,11 @@ def main(arguments):
         else:
             download_and_extract(task, args.data_dir)
 
-
 if __name__ == '__main__':
-    sys.exit(main(sys.argv[1:]))
+    try:
+        sys.exit(main(sys.argv[1:]))
+    except Exception as e:
+        import traceback
+        tb_str = ''.join(traceback.format_exception(e))
+        print(f"An error occurred: {e}\nTraceback:\n{tb_str}")
+        sys.exit(1)
