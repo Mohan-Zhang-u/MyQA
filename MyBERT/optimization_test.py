@@ -21,10 +21,13 @@ import optimization
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
 
+from typing import TypeVar
+
+Self = TypeVar('Self', bound='OptimizationTest')
 
 class OptimizationTest(tf.test.TestCase):
 
-    def test_adam(self):
+    def test_adam(self: Self) -> None:
         with self.test_session() as sess:
             w = tf.get_variable(
                 "w",
