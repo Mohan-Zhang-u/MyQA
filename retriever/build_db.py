@@ -61,7 +61,9 @@ def iter_files(path):
             for f in filenames:
                 yield os.path.join(dirpath, f)
     else:
-        raise RuntimeError(f'Path {path} is invalid')
+        error = RuntimeError(f'Path {path} is invalid')
+        error.add_note('Ensure the path is correct and accessible.')
+        raise error
 
 
 def get_contents(filename):
@@ -95,7 +97,9 @@ def store_contents(data_path, save_path, preprocess, num_workers=None):
         num_workers: Number of parallel processes to use when reading docs.
     """
     if os.path.isfile(save_path):
-        raise RuntimeError(f'{save_path} already exists! Not overwriting.')
+        error = RuntimeError(f'{save_path} already exists! Not overwriting.')
+        error.add_note('Consider removing the existing file or choosing a different save path.')
+        raise error
 
     logger.info('Reading into database...')
     conn = sqlite3.connect(save_path)
