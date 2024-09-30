@@ -14,13 +14,11 @@
 # limitations under the License.
 """Create masked LM/next sentence masked_lm TF examples for BERT."""
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from __future__ import annotations
 
 import collections
 import random
-from typing import List, Tuple, Dict, Any, TypeVar
+from typing import List, Tuple, Dict, Any, TypeVar, LiteralString
 
 import tokenization
 import tensorflow as tf
@@ -98,7 +96,7 @@ class TrainingInstance:
 
 
 def write_instance_to_example_files(instances: List[TrainingInstance], tokenizer: Any, max_seq_length: int,
-                                    max_predictions_per_seq: int, output_files: List[str]) -> None:
+                                    max_predictions_per_seq: int, output_files: List[LiteralString]) -> None:
     """Create TF example files from `TrainingInstance`s."""
     writers = [tf.io.TFRecordWriter(output_file) for output_file in output_files]
 
@@ -178,7 +176,7 @@ def create_float_feature(values: List[float]) -> tf.train.Feature:
     return feature
 
 
-def create_training_instances(input_files: List[str], tokenizer: Any, max_seq_length: int,
+def create_training_instances(input_files: List[LiteralString], tokenizer: Any, max_seq_length: int,
                               dupe_factor: int, short_seq_prob: float, masked_lm_prob: float,
                               max_predictions_per_seq: int, rng: random.Random) -> List[TrainingInstance]:
     """Create `TrainingInstance`s from raw text."""
