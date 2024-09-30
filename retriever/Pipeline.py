@@ -2,7 +2,7 @@ import json
 import codecs
 import os
 import argparse
-
+from typing import List, Dict, Any
 
 # The structure looks like this:
 # SQuAD:https://rajpurkar.github.io/SQuAD-explorer/
@@ -46,7 +46,7 @@ import argparse
 # answer_start=-1
 # text=""
 
-def format_paragraph(paragraph):
+def format_paragraph(paragraph: str) -> str:
     paragraph = paragraph.replace('\r\n', '\n')
     paragraph = paragraph.replace('\n', '\n')
     # paragraph.replace('\'', ' ')
@@ -55,19 +55,19 @@ def format_paragraph(paragraph):
     return paragraph
 
 
-def generate_multi_test_cases(list_of_paragraphs, list_of_questions, document_reader_json_path):
+def generate_multi_test_cases(list_of_paragraphs: List[str], list_of_questions: List[str], document_reader_json_path: str) -> None:
     assert len(list_of_paragraphs) == len(list_of_questions)
     length_of_them = len(list_of_paragraphs)
 
-    data = []
+    data: List[Dict[str, Any]] = []
     version = "my_ver"
 
-    jsondict = {}
+    jsondict: Dict[str, Any] = {}
     jsondict["data"] = data
     jsondict["version"] = version
 
     for j in range(length_of_them):
-        new_paragraph = {}
+        new_paragraph: Dict[str, Any] = {}
         new_paragraph["context"] = list_of_paragraphs[j]
         new_paragraph["qas"] = [{"answers": [{"answer_start": -1, "text": ""}], "question": list_of_questions[j],
                                  "id": list_of_questions[j]}]
@@ -77,9 +77,9 @@ def generate_multi_test_cases(list_of_paragraphs, list_of_questions, document_re
         json.dump(jsondict, fp, ensure_ascii=False, indent=4)
 
 
-def pipeline(corpus_path, retrieved_json_path, document_reader_json_path, question):
+def pipeline(corpus_path: str, retrieved_json_path: str, document_reader_json_path: str, question: str) -> None:
     document = ""
-    doc_names = {}
+    doc_names: Dict[str, Any] = {}
     try:
         with codecs.open(retrieved_json_path, 'r', encoding='utf-8') as fpr:
             doc_names = json.load(fpr)
