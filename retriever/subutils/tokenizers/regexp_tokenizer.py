@@ -103,3 +103,8 @@ class RegexpTokenizer(Tokenizer):
                 span,
             ))
         return Tokens(data, self.annotators)
+
+    @classmethod
+    def create(cls, **kwargs) -> Self:
+        """Factory method to create an instance of RegexpTokenizer."""
+        return cls(**kwargs)
