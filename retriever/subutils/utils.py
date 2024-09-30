@@ -11,14 +11,17 @@ import unicodedata
 import numpy as np
 import scipy.sparse as sp
 from sklearn.utils import murmurhash3_32
+from typing import TypeVar, List, Tuple, Optional
 
+# Define a variadic generic type variable
+Ts = TypeVar('Ts')
 
 # ------------------------------------------------------------------------------
 # Sparse matrix saving/loading helpers.
 # ------------------------------------------------------------------------------
 
 
-def save_sparse_csr(filename, matrix, metadata=None):
+def save_sparse_csr(filename: str, matrix: sp.csr_matrix, metadata: Optional[dict] = None) -> None:
     data = {
         'data': matrix.data,
         'indices': matrix.indices,
@@ -29,7 +32,7 @@ def save_sparse_csr(filename, matrix, metadata=None):
     np.savez(filename, **data)
 
 
-def load_sparse_csr(filename):
+def load_sparse_csr(filename: str) -> Tuple[sp.csr_matrix, Optional[dict]]:
     loader = np.load(filename, allow_pickle=True)
     matrix = sp.csr_matrix((loader['data'], loader['indices'],
                             loader['indptr']), shape=loader['shape'])
@@ -41,7 +44,7 @@ def load_sparse_csr(filename):
 # ------------------------------------------------------------------------------
 
 
-def hash(token, num_buckets):
+def hash(token: str, num_buckets: int) -> int:
     """Unsigned 32 bit murmurhash for feature hashing."""
     return murmurhash3_32(token, positive=True) % num_buckets
 
@@ -72,12 +75,12 @@ STOPWORDS = {
 }
 
 
-def normalize(text):
+def normalize(text: str) -> str:
     """Resolve different type of unicode encodings."""
     return unicodedata.normalize('NFD', text)
 
 
-def filter_word(text):
+def filter_word(text: str) -> bool:
     """Take out english stopwords, punctuation, and compound endings."""
     text = normalize(text)
     if regex.match(r'^\p{P}+$', text):
@@ -87,7 +90,7 @@ def filter_word(text):
     return False
 
 
-def filter_ngram(gram, mode='any'):
+def filter_ngram(gram: List[str], mode: str = 'any') -> bool:
     """Decide whether to keep or discard an n-gram.
 
     Args:
