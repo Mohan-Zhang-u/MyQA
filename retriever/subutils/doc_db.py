@@ -54,6 +54,16 @@ class DocDB(object):
                 (utils.normalize(doc_id),)
             )
             result = cursor.fetchone()
+        except* sqlite3.DatabaseError as db_errors:
+            # Handle database-related exceptions
+            for error in db_errors.exceptions:
+                print(f"Database error occurred: {error}")
+            result = None
+        except* Exception as other_errors:
+            # Handle other exceptions
+            for error in other_errors.exceptions:
+                print(f"An error occurred: {error}")
+            result = None
         finally:
             cursor.close()
         return result if result is None else result[0]
