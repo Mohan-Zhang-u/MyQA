@@ -25,7 +25,7 @@ import modeling
 import optimization
 import tokenization
 import tensorflow as tf
-from typing import TypeVar, Generic, List, Optional, Self
+from typing import TypeVar, Generic, List, Optional, LiteralString
 
 flags = tf.compat.v1.flags
 
@@ -160,15 +160,15 @@ class InputFeatures(Generic[Ts]):
 class DataProcessor(Generic[Ts]):
   """Base class for data converters for sequence classification data sets."""
 
-  def get_train_examples(self, data_dir: str) -> List[InputExample]:
+  def get_train_examples(self, data_dir: LiteralString) -> List[InputExample]:
     """Gets a collection of `InputExample`s for the train set."""
     raise NotImplementedError()
 
-  def get_dev_examples(self, data_dir: str) -> List[InputExample]:
+  def get_dev_examples(self, data_dir: LiteralString) -> List[InputExample]:
     """Gets a collection of `InputExample`s for the dev set."""
     raise NotImplementedError()
 
-  def get_test_examples(self, data_dir: str) -> List[InputExample]:
+  def get_test_examples(self, data_dir: LiteralString) -> List[InputExample]:
     """Gets a collection of `InputExample`s for prediction."""
     raise NotImplementedError()
 
@@ -177,7 +177,7 @@ class DataProcessor(Generic[Ts]):
     raise NotImplementedError()
 
   @classmethod
-  def _read_tsv(cls, input_file: str, quotechar: Optional[str] = None) -> List[List[str]]:
+  def _read_tsv(cls, input_file: LiteralString, quotechar: Optional[str] = None) -> List[List[str]]:
     """Reads a tab separated value file."""
     with tf.io.gfile.GFile(input_file, "r") as f:
       reader = csv.reader(f, delimiter="\t", quotechar=quotechar)
@@ -193,7 +193,7 @@ class XnliProcessor(DataProcessor):
   def __init__(self):
     self.language = "zh"
 
-  def get_train_examples(self, data_dir: str) -> List[InputExample]:
+  def get_train_examples(self, data_dir: LiteralString) -> List[InputExample]:
     """See base class."""
     lines = self._read_tsv(
         os.path.join(data_dir, "multinli",
@@ -212,7 +212,7 @@ class XnliProcessor(DataProcessor):
           InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
     return examples
 
-  def get_dev_examples(self, data_dir: str) -> List[InputExample]:
+  def get_dev_examples(self, data_dir: LiteralString) -> List[InputExample]:
     """See base class."""
     lines = self._read_tsv(os.path.join(data_dir, "xnli.dev.tsv"))
     examples = []
@@ -238,18 +238,18 @@ class XnliProcessor(DataProcessor):
 class MnliProcessor(DataProcessor):
   """Processor for the MultiNLI data set (GLUE version)."""
 
-  def get_train_examples(self, data_dir: str) -> List[InputExample]:
+  def get_train_examples(self, data_dir: LiteralString) -> List[InputExample]:
     """See base class."""
     return self._create_examples(
         self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
 
-  def get_dev_examples(self, data_dir: str) -> List[InputExample]:
+  def get_dev_examples(self, data_dir: LiteralString) -> List[InputExample]:
     """See base class."""
     return self._create_examples(
         self._read_tsv(os.path.join(data_dir, "dev_matched.tsv")),
         "dev_matched")
 
-  def get_test_examples(self, data_dir: str) -> List[InputExample]:
+  def get_test_examples(self, data_dir: LiteralString) -> List[InputExample]:
     """See base class."""
     return self._create_examples(
         self._read_tsv(os.path.join(data_dir, "test_matched.tsv")), "test")
@@ -258,7 +258,7 @@ class MnliProcessor(DataProcessor):
     """See base class."""
     return ["contradiction", "entailment", "neutral"]
 
-  def _create_examples(self, lines: List[List[str]], set_type: str) -> List[InputExample]:
+  def _create_examples(self, lines: List[List[str]], set_type: LiteralString) -> List[InputExample]:
     """Creates examples for the training and dev sets."""
     examples = []
     for (i, line) in enumerate(lines):
@@ -279,17 +279,17 @@ class MnliProcessor(DataProcessor):
 class MrpcProcessor(DataProcessor):
   """Processor for the MRPC data set (GLUE version)."""
 
-  def get_train_examples(self, data_dir: str) -> List[InputExample]:
+  def get_train_examples(self, data_dir: LiteralString) -> List[InputExample]:
     """See base class."""
     return self._create_examples(
         self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
 
-  def get_dev_examples(self, data_dir: str) -> List[InputExample]:
+  def get_dev_examples(self, data_dir: LiteralString) -> List[InputExample]:
     """See base class."""
     return self._create_examples(
         self._read_tsv(os.path.join(data_dir, "dev.tsv")), "dev")
 
-  def get_test_examples(self, data_dir: str) -> List[InputExample]:
+  def get_test_examples(self, data_dir: LiteralString) -> List[InputExample]:
     """See base class."""
     return self._create_examples(
         self._read_tsv(os.path.join(data_dir, "test.tsv")), "test")
@@ -298,7 +298,7 @@ class MrpcProcessor(DataProcessor):
     """See base class."""
     return ["0", "1"]
 
-  def _create_examples(self, lines: List[List[str]], set_type: str) -> List[InputExample]:
+  def _create_examples(self, lines: List[List[str]], set_type: LiteralString) -> List[InputExample]:
     """Creates examples for the training and dev sets."""
     examples = []
     for (i, line) in enumerate(lines):
@@ -319,17 +319,17 @@ class MrpcProcessor(DataProcessor):
 class ColaProcessor(DataProcessor):
   """Processor for the CoLA data set (GLUE version)."""
 
-  def get_train_examples(self, data_dir: str) -> List[InputExample]:
+  def get_train_examples(self, data_dir: LiteralString) -> List[InputExample]:
     """See base class."""
     return self._create_examples(
         self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
 
-  def get_dev_examples(self, data_dir: str) -> List[InputExample]:
+  def get_dev_examples(self, data_dir: LiteralString) -> List[InputExample]:
     """See base class."""
     return self._create_examples(
         self._read_tsv(os.path.join(data_dir, "dev.tsv")), "dev")
 
-  def get_test_examples(self, data_dir: str) -> List[InputExample]:
+  def get_test_examples(self, data_dir: LiteralString) -> List[InputExample]:
     """See base class."""
     return self._create_examples(
         self._read_tsv(os.path.join(data_dir, "test.tsv")), "test")
@@ -338,7 +338,7 @@ class ColaProcessor(DataProcessor):
     """See base class."""
     return ["0", "1"]
 
-  def _create_examples(self, lines: List[List[str]], set_type: str) -> List[InputExample]:
+  def _create_examples(self, lines: List[List[str]], set_type: LiteralString) -> List[InputExample]:
     """Creates examples for the training and dev sets."""
     examples = []
     for (i, line) in enumerate(lines):
@@ -450,7 +450,7 @@ def convert_single_example(ex_index: int, example: InputExample, label_list: Lis
 
 
 def file_based_convert_examples_to_features(
-    examples: List[InputExample], label_list: List[str], max_seq_length: int, tokenizer: tokenization.FullTokenizer, output_file: str):
+    examples: List[InputExample], label_list: List[str], max_seq_length: int, tokenizer: tokenization.FullTokenizer, output_file: LiteralString):
   """Convert a set of `InputExample`s to a TFRecord file."""
 
   writer = tf.io.TFRecordWriter(output_file)
@@ -476,7 +476,7 @@ def file_based_convert_examples_to_features(
     writer.write(tf_example.SerializeToString())
 
 
-def file_based_input_fn_builder(input_file: str, seq_length: int, is_training: bool,
+def file_based_input_fn_builder(input_file: LiteralString, seq_length: int, is_training: bool,
                                 drop_remainder: bool):
   """Creates an `input_fn` closure to be passed to TPUEstimator."""
 
@@ -585,7 +585,7 @@ def create_model(bert_config: modeling.BertConfig, is_training: bool, input_ids:
     return (loss, per_example_loss, logits, probabilities)
 
 
-def model_fn_builder(bert_config: modeling.BertConfig, num_labels: int, init_checkpoint: str, learning_rate: float,
+def model_fn_builder(bert_config: modeling.BertConfig, num_labels: int, init_checkpoint: LiteralString, learning_rate: float,
                      num_train_steps: int, num_warmup_steps: int, use_tpu: bool,
                      use_one_hot_embeddings: bool):
   """Returns `model_fn` closure for TPUEstimator."""
