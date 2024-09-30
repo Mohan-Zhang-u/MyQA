@@ -2,7 +2,7 @@ import json
 import codecs
 import os
 import argparse
-from typing import List, Dict, Any
+from typing import List, Dict, Any, TypedDict, NotRequired
 
 # The structure looks like this:
 # SQuAD:https://rajpurkar.github.io/SQuAD-explorer/
@@ -46,6 +46,27 @@ from typing import List, Dict, Any
 # answer_start=-1
 # text=""
 
+class Answer(TypedDict):
+    answer_start: int
+    text: str
+
+class QAS(TypedDict):
+    answers: List[Answer]
+    id: str
+    question: str
+
+class Paragraph(TypedDict):
+    context: str
+    qas: List[QAS]
+
+class Data(TypedDict):
+    title: str
+    paragraphs: List[Paragraph]
+
+class JSONDict(TypedDict):
+    data: List[Data]
+    version: str
+
 def format_paragraph(paragraph: str) -> str:
     paragraph = paragraph.replace('\r\n', '\n')
     paragraph = paragraph.replace('\n', '\n')
@@ -59,15 +80,15 @@ def generate_multi_test_cases(list_of_paragraphs: List[str], list_of_questions: 
     assert len(list_of_paragraphs) == len(list_of_questions)
     length_of_them = len(list_of_paragraphs)
 
-    data: List[Dict[str, Any]] = []
+    data: List[Data] = []
     version = "my_ver"
 
-    jsondict: Dict[str, Any] = {}
+    jsondict: JSONDict = {}
     jsondict["data"] = data
     jsondict["version"] = version
 
     for j in range(length_of_them):
-        new_paragraph: Dict[str, Any] = {}
+        new_paragraph: Paragraph = {}
         new_paragraph["context"] = list_of_paragraphs[j]
         new_paragraph["qas"] = [{"answers": [{"answer_start": -1, "text": ""}], "question": list_of_questions[j],
                                  "id": list_of_questions[j]}]
