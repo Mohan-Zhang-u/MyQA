@@ -7,27 +7,28 @@
 """Base tokenizer/tokens classes and utilities."""
 
 import copy
-from typing import List, Tuple, Optional, Callable, Any, Self, LiteralString
+from typing import List, Tuple, Optional, Callable, Any, LiteralString
+from dataclasses import dataclass, field
 
+@dataclass
 class Tokens:
     """A class to represent a list of tokenized text."""
-    TEXT = 0
-    TEXT_WS = 1
-    SPAN = 2
-    POS = 3
-    LEMMA = 4
-    NER = 5
+    data: List[Tuple]
+    annotators: set
+    opts: Optional[dict] = field(default_factory=dict)
 
-    def __init__(self, data: List[Tuple], annotators: set, opts: Optional[dict] = None):
-        self.data = data
-        self.annotators = annotators
-        self.opts = opts or {}
+    TEXT: int = 0
+    TEXT_WS: int = 1
+    SPAN: int = 2
+    POS: int = 3
+    LEMMA: int = 4
+    NER: int = 5
 
     def __len__(self) -> int:
         """The number of tokens."""
         return len(self.data)
 
-    def slice(self, i: Optional[int] = None, j: Optional[int] = None) -> Self:
+    def slice(self, i: Optional[int] = None, j: Optional[int] = None) -> 'Tokens':
         """Return a view of the list of tokens from [i, j)."""
         new_tokens = copy.copy(self)
         new_tokens.data = self.data[i: j]
