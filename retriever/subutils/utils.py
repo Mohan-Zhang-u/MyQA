@@ -11,7 +11,7 @@ import unicodedata
 import numpy as np
 import scipy.sparse as sp
 from sklearn.utils import murmurhash3_32
-from typing import TypeVar, List, Tuple, Optional, LiteralString
+from typing import TypeVar, List, Tuple, Optional, Literal
 
 # Define a variadic generic type variable
 Ts = TypeVar('Ts')
@@ -90,7 +90,7 @@ def filter_word(text: str) -> bool:
     return False
 
 
-def filter_ngram(gram: List[str], mode: LiteralString = 'any') -> bool:
+def filter_ngram(gram: List[str], mode: Literal['any', 'all', 'ends'] = 'any') -> bool:
     """Decide whether to keep or discard an n-gram.
 
     Args:
