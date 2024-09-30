@@ -22,7 +22,7 @@ import collections
 import unicodedata
 import six
 import tensorflow as tf
-from typing import List, Dict, Union, TypeVar, Generic, Self
+from typing import List, Dict, Union, TypeVar, Generic, LiteralString
 
 T = TypeVar('T')
 Ts = TypeVar('Ts')
@@ -51,7 +51,7 @@ def printable_text(text: Union[str, bytes]) -> str:
         raise exc
 
 
-def load_vocab(vocab_file: str) -> Dict[str, int]:
+def load_vocab(vocab_file: LiteralString) -> Dict[str, int]:
     """Loads a vocabulary file into a dictionary."""
     vocab = collections.OrderedDict()
     index = 0
@@ -94,7 +94,7 @@ def whitespace_tokenize(text: str) -> List[str]:
 class FullTokenizer(Generic[Ts]):
     """Runs end-to-end tokenziation."""
 
-    def __init__(self, vocab_file: str, do_lower_case: bool = True):
+    def __init__(self, vocab_file: LiteralString, do_lower_case: bool = True):
         self.vocab = load_vocab(vocab_file)
         self.inv_vocab = {v: k for k, v in self.vocab.items()}
         self.basic_tokenizer = BasicTokenizer(do_lower_case=do_lower_case)
