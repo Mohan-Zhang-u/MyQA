@@ -435,9 +435,9 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length,
         tf.compat.v1.logging.info("tokens: %s" % " ".join(
             [tokenization.printable_text(x) for x in tokens]))
         tf.compat.v1.logging.info("token_to_orig_map: %s" % " ".join(
-            ["%d:%d" % (x, y) for (x, y) in six.iteritems(token_to_orig_map)]))
+            ["%d:%d" % (x, y) for (x, y) in token_to_orig_map.items()]))
         tf.compat.v1.logging.info("token_is_max_context: %s" % " ".join([
-            "%d:%s" % (x, y) for (x, y) in six.iteritems(token_is_max_context)
+            "%d:%s" % (x, y) for (x, y) in token_is_max_context.items()
         ]))
         tf.compat.v1.logging.info("input_ids: %s" % " ".join([str(x) for x in input_ids]))
         tf.compat.v1.logging.info(
@@ -991,7 +991,7 @@ def get_final_text(pred_text, orig_text, do_lower_case):
   # We then project the characters in `pred_text` back to `orig_text` using
   # the character-to-character alignment.
   tok_s_to_ns_map = {}
-  for (i, tok_index) in six.iteritems(tok_ns_to_s_map):
+  for (i, tok_index) in tok_ns_to_s_map.items():
     tok_s_to_ns_map[tok_index] = i
 
   orig_start_position = None
