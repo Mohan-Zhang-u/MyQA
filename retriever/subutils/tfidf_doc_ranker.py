@@ -94,7 +94,9 @@ class TfidfDocRanker(object):
 
         if len(wids) == 0:
             if self.strict:
-                raise RuntimeError('No valid word in: %s' % query)
+                exc = RuntimeError('No valid word in: %s' % query)
+                exc.add_note("Ensure the query contains valid words.")
+                raise exc
             else:
                 logger.warning('No valid word in: %s' % query)
                 return sp.csr_matrix((1, self.hash_size))
@@ -125,6 +127,10 @@ class TfidfDocRanker(object):
             # Example operation that might raise multiple exceptions
             pass
         except* (ValueError, TypeError) as e:
+            for exc in e.exceptions:
+                exc.add_note("Check the input values and types.")
             logger.error("Caught ValueError or TypeError: %s", e)
         except* Exception as e:
+            for exc in e.exceptions:
+                exc.add_note("An unexpected error occurred.")
             logger.error("Caught a general exception: %s", e)
