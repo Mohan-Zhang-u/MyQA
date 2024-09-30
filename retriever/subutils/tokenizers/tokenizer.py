@@ -7,7 +7,7 @@
 """Base tokenizer/tokens classes and utilities."""
 
 import copy
-from typing import List, Tuple, Optional, Callable, Any
+from typing import List, Tuple, Optional, Callable, Any, Self
 
 class Tokens:
     """A class to represent a list of tokenized text."""
@@ -27,7 +27,7 @@ class Tokens:
         """The number of tokens."""
         return len(self.data)
 
-    def slice(self, i: Optional[int] = None, j: Optional[int] = None) -> 'Tokens':
+    def slice(self, i: Optional[int] = None, j: Optional[int] = None) -> Self:
         """Return a view of the list of tokens from [i, j)."""
         new_tokens = copy.copy(self)
         new_tokens.data = self.data[i: j]
