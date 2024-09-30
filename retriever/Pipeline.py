@@ -2,7 +2,7 @@ import json
 import codecs
 import os
 import argparse
-from typing import List, Dict, Any, TypedDict, NotRequired, Self
+from typing import List, Dict, Any, TypedDict, LiteralString
 
 # The structure looks like this:
 # SQuAD:https://rajpurkar.github.io/SQuAD-explorer/
@@ -76,7 +76,7 @@ def format_paragraph(paragraph: str) -> str:
     return paragraph
 
 
-def generate_multi_test_cases(list_of_paragraphs: List[str], list_of_questions: List[str], document_reader_json_path: str) -> None:
+def generate_multi_test_cases(list_of_paragraphs: List[str], list_of_questions: List[str], document_reader_json_path: LiteralString) -> None:
     assert len(list_of_paragraphs) == len(list_of_questions)
     length_of_them = len(list_of_paragraphs)
 
@@ -98,7 +98,7 @@ def generate_multi_test_cases(list_of_paragraphs: List[str], list_of_questions: 
         json.dump(jsondict, fp, ensure_ascii=False, indent=4)
 
 
-def pipeline(corpus_path: str, retrieved_json_path: str, document_reader_json_path: str, question: str) -> None:
+def pipeline(corpus_path: LiteralString, retrieved_json_path: LiteralString, document_reader_json_path: LiteralString, question: str) -> None:
     document = ""
     doc_names: Dict[str, Any] = {}
     try:
