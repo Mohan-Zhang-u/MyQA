@@ -9,8 +9,12 @@ import json
 import codecs
 import os
 import argparse
+from typing import TypeVar, Generic
 
-def CreateJsonFile(datafile_path, json_path):
+# Define a variadic generic for functions that accept multiple types
+Ts = TypeVar('Ts')
+
+def CreateJsonFile(datafile_path: str, json_path: str) -> None:
     for filename in os.listdir(datafile_path):
         file_path = os.path.join(datafile_path, filename)
         try:
