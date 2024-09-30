@@ -12,7 +12,7 @@ Requires spaCy package and the spaCy english model.
 import spacy
 import copy
 from .tokenizer import Tokens, Tokenizer
-from typing import TypeVar, Generic, Set, Tuple, Any, List
+from typing import TypeVar, Generic, Set, Tuple, Any, List, Self
 
 # Define a variadic generic type variable
 Ts = TypeVar('Ts')
