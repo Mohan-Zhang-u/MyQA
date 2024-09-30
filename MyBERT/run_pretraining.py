@@ -363,11 +363,10 @@ def input_fn_builder(input_files,
 
       # `sloppy` mode means that the interleaving is not exact. This adds
       # even more randomness to the training pipeline.
-      d = d.apply(
-          tf.data.experimental.parallel_interleave(
-              tf.data.TFRecordDataset,
-              sloppy=is_training,
-              cycle_length=cycle_length))
+      d = d.interleave(
+          tf.data.TFRecordDataset,
+          cycle_length=cycle_length,
+          num_parallel_calls=tf.data.AUTOTUNE)
       d = d.shuffle(buffer_size=100)
     else:
       d = tf.data.TFRecordDataset(input_files)
@@ -379,12 +378,10 @@ def input_fn_builder(input_files,
     # size dimensions. For eval, we assume we are evaluating on the CPU or GPU
     # and we *don't* want to drop the remainder, otherwise we wont cover
     # every sample.
-    d = d.apply(
-        tf.data.experimental.map_and_batch(
-            lambda record: _decode_record(record, name_to_features),
-            batch_size=batch_size,
-            num_parallel_calls=num_cpu_threads,
-            drop_remainder=True))
+    d = d.map(
+        lambda record: _decode_record(record, name_to_features),
+        num_parallel_calls=tf.data.AUTOTUNE)
+    d = d.batch(batch_size=batch_size, drop_remainder=True)
     return d
 
   return input_fn
