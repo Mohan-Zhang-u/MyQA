@@ -54,15 +54,15 @@ class DocDB(object):
                 (utils.normalize(doc_id),)
             )
             result = cursor.fetchone()
-        except* sqlite3.DatabaseError as db_errors:
+        except sqlite3.DatabaseError as db_error:
             # Handle database-related exceptions
-            for error in db_errors.exceptions:
-                print(f"Database error occurred: {error}")
+            db_error.add_note(f"Failed to fetch document text for doc_id: {doc_id}")
+            print(f"Database error occurred: {db_error}")
             result = None
-        except* Exception as other_errors:
+        except Exception as other_error:
             # Handle other exceptions
-            for error in other_errors.exceptions:
-                print(f"An error occurred: {error}")
+            other_error.add_note(f"An unexpected error occurred while fetching document text for doc_id: {doc_id}")
+            print(f"An error occurred: {other_error}")
             result = None
         finally:
             cursor.close()
