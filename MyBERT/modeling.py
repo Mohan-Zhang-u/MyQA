@@ -4,16 +4,21 @@ import math
 import re
 import tensorflow as tf
 import six
+from typing import TypeVar, Generic, List, Tuple, Optional
 
-class BertModel:
+# Define variadic generics
+T = TypeVar('T')
+Ts = TypeVar('Ts')
+
+class BertModel(Generic[Ts]):
     def __init__(self,
-                 config,
-                 is_training,
-                 input_ids,
-                 input_mask=None,
-                 token_type_ids=None,
-                 use_one_hot_embeddings=True,
-                 scope=None):
+                 config: T,
+                 is_training: bool,
+                 input_ids: tf.Tensor,
+                 input_mask: Optional[tf.Tensor] = None,
+                 token_type_ids: Optional[tf.Tensor] = None,
+                 use_one_hot_embeddings: bool = True,
+                 scope: Optional[str] = None):
         """Constructor for BertModel.
 
         Args:
@@ -111,10 +116,10 @@ class BertModel:
                     activation=tf.tanh,
                     kernel_initializer=create_initializer(config.initializer_range))
 
-    def get_pooled_output(self):
+    def get_pooled_output(self) -> tf.Tensor:
         return self.pooled_output
 
-    def get_sequence_output(self):
+    def get_sequence_output(self) -> tf.Tensor:
         """Gets final hidden layer of encoder.
 
         Returns:
@@ -123,10 +128,10 @@ class BertModel:
         """
         return self.sequence_output
 
-    def get_all_encoder_layers(self):
+    def get_all_encoder_layers(self) -> List[tf.Tensor]:
         return self.all_encoder_layers
 
-    def get_embedding_output(self):
+    def get_embedding_output(self) -> tf.Tensor:
         """Gets output of the embedding lookup (i.e., input to the transformer).
 
         Returns:
@@ -137,11 +142,11 @@ class BertModel:
         """
         return self.embedding_output
 
-    def get_embedding_table(self):
+    def get_embedding_table(self) -> tf.Tensor:
         return self.embedding_table
 
 
-def gelu(input_tensor):
+def gelu(input_tensor: tf.Tensor) -> tf.Tensor:
     """Gaussian Error Linear Unit.
 
     This is a smoother version of the RELU.
@@ -157,7 +162,7 @@ def gelu(input_tensor):
     return input_tensor * cdf
 
 
-def get_activation(activation_string):
+def get_activation(activation_string: Optional[str]) -> Optional[callable]:
     """Maps a string to a Python function, e.g., "relu" => `tf.nn.relu`.
 
     Args:
@@ -196,9 +201,9 @@ def get_activation(activation_string):
             "Please use one of the supported activations: 'linear', 'relu', 'gelu', 'tanh'.")
 
 
-def get_assignment_map_from_checkpoint(tvars, init_checkpoint):
+def get_assignment_map_from_checkpoint(tvars: List[tf.Variable], init_checkpoint: str) -> Tuple[collections.OrderedDict, dict]:
     """Compute the union of the current variables and checkpoint variables."""
-    assignment_map = {}
+    assignment_map = collections.OrderedDict()
     initialized_variable_names = {}
 
     name_to_variable = collections.OrderedDict()
@@ -211,7 +216,6 @@ def get_assignment_map_from_checkpoint(tvars, init_checkpoint):
 
     init_vars = tf.train.list_variables(init_checkpoint)
 
-    assignment_map = collections.OrderedDict()
     for x in init_vars:
         (name, var) = (x[0], x[1])
         if name not in name_to_variable:
@@ -223,7 +227,7 @@ def get_assignment_map_from_checkpoint(tvars, init_checkpoint):
     return (assignment_map, initialized_variable_names)
 
 
-def dropout(input_tensor, dropout_prob):
+def dropout(input_tensor: tf.Tensor, dropout_prob: float) -> tf.Tensor:
     """Perform dropout.
 
     Args:
@@ -241,30 +245,30 @@ def dropout(input_tensor, dropout_prob):
     return output
 
 
-def layer_norm(input_tensor, name=None):
+def layer_norm(input_tensor: tf.Tensor, name: Optional[str] = None) -> tf.Tensor:
     """Run layer normalization on the last dimension of the tensor."""
     return tf.contrib.layers.layer_norm(
         inputs=input_tensor, begin_norm_axis=-1, begin_params_axis=-1, scope=name)
 
 
-def layer_norm_and_dropout(input_tensor, dropout_prob, name=None):
+def layer_norm_and_dropout(input_tensor: tf.Tensor, dropout_prob: float, name: Optional[str] = None) -> tf.Tensor:
     """Runs layer normalization followed by dropout."""
     output_tensor = layer_norm(input_tensor, name)
     output_tensor = dropout(output_tensor, dropout_prob)
     return output_tensor
 
 
-def create_initializer(initializer_range=0.02):
+def create_initializer(initializer_range: float = 0.02) -> tf.initializers.TruncatedNormal:
     """Creates a `truncated_normal_initializer` with the given range."""
     return tf.truncated_normal_initializer(stddev=initializer_range)
 
 
-def embedding_lookup(input_ids,
-                     vocab_size,
-                     embedding_size=128,
-                     initializer_range=0.02,
-                     word_embedding_name="word_embeddings",
-                     use_one_hot_embeddings=False):
+def embedding_lookup(input_ids: tf.Tensor,
+                     vocab_size: int,
+                     embedding_size: int = 128,
+                     initializer_range: float = 0.02,
+                     word_embedding_name: str = "word_embeddings",
+                     use_one_hot_embeddings: bool = False) -> Tuple[tf.Tensor, tf.Tensor]:
     """Looks up words embeddings for id tensor.
 
     Args:
@@ -308,16 +312,16 @@ def embedding_lookup(input_ids,
     return (output, embedding_table)
 
 
-def embedding_postprocessor(input_tensor,
-                            use_token_type=False,
-                            token_type_ids=None,
-                            token_type_vocab_size=16,
-                            token_type_embedding_name="token_type_embeddings",
-                            use_position_embeddings=True,
-                            position_embedding_name="position_embeddings",
-                            initializer_range=0.02,
-                            max_position_embeddings=512,
-                            dropout_prob=0.1):
+def embedding_postprocessor(input_tensor: tf.Tensor,
+                            use_token_type: bool = False,
+                            token_type_ids: Optional[tf.Tensor] = None,
+                            token_type_vocab_size: int = 16,
+                            token_type_embedding_name: str = "token_type_embeddings",
+                            use_position_embeddings: bool = True,
+                            position_embedding_name: str = "position_embeddings",
+                            initializer_range: float = 0.02,
+                            max_position_embeddings: int = 512,
+                            dropout_prob: float = 0.1) -> tf.Tensor:
     """Performs various post-processing on a word embedding tensor.
 
     Args:
@@ -404,7 +408,7 @@ def embedding_postprocessor(input_tensor,
     return output
 
 
-def create_attention_mask_from_input_mask(from_tensor, to_mask):
+def create_attention_mask_from_input_mask(from_tensor: tf.Tensor, to_mask: tf.Tensor) -> tf.Tensor:
     """Create 3D attention mask from a 2D tensor mask.
 
     Args:
@@ -438,20 +442,20 @@ def create_attention_mask_from_input_mask(from_tensor, to_mask):
     return mask
 
 
-def attention_layer(from_tensor,
-                    to_tensor,
-                    attention_mask=None,
-                    num_attention_heads=1,
-                    size_per_head=512,
-                    query_act=None,
-                    key_act=None,
-                    value_act=None,
-                    attention_probs_dropout_prob=0.0,
-                    initializer_range=0.02,
-                    do_return_2d_tensor=False,
-                    batch_size=None,
-                    from_seq_length=None,
-                    to_seq_length=None):
+def attention_layer(from_tensor: tf.Tensor,
+                    to_tensor: tf.Tensor,
+                    attention_mask: Optional[tf.Tensor] = None,
+                    num_attention_heads: int = 1,
+                    size_per_head: int = 512,
+                    query_act: Optional[callable] = None,
+                    key_act: Optional[callable] = None,
+                    value_act: Optional[callable] = None,
+                    attention_probs_dropout_prob: float = 0.0,
+                    initializer_range: float = 0.02,
+                    do_return_2d_tensor: bool = False,
+                    batch_size: Optional[int] = None,
+                    from_seq_length: Optional[int] = None,
+                    to_seq_length: Optional[int] = None) -> tf.Tensor:
     """Performs multi-headed attention from `from_tensor` to `to_tensor`.
 
     This is an implementation of multi-headed attention based on "Attention
@@ -509,8 +513,8 @@ def attention_layer(from_tensor,
       ValueError: Any of the arguments or tensor shapes are invalid.
     """
 
-    def transpose_for_scores(input_tensor, batch_size, num_attention_heads,
-                             seq_length, width):
+    def transpose_for_scores(input_tensor: tf.Tensor, batch_size: int, num_attention_heads: int,
+                             seq_length: int, width: int) -> tf.Tensor:
         output_tensor = tf.reshape(
             input_tensor, [batch_size, seq_length, num_attention_heads, width])
 
@@ -634,17 +638,17 @@ def attention_layer(from_tensor,
     return context_layer
 
 
-def transformer_model(input_tensor,
-                      attention_mask=None,
-                      hidden_size=768,
-                      num_hidden_layers=12,
-                      num_attention_heads=12,
-                      intermediate_size=3072,
-                      intermediate_act_fn=gelu,
-                      hidden_dropout_prob=0.1,
-                      attention_probs_dropout_prob=0.1,
-                      initializer_range=0.02,
-                      do_return_all_layers=False):
+def transformer_model(input_tensor: tf.Tensor,
+                      attention_mask: Optional[tf.Tensor] = None,
+                      hidden_size: int = 768,
+                      num_hidden_layers: int = 12,
+                      num_attention_heads: int = 12,
+                      intermediate_size: int = 3072,
+                      intermediate_act_fn: callable = gelu,
+                      hidden_dropout_prob: float = 0.1,
+                      attention_probs_dropout_prob: float = 0.1,
+                      initializer_range: float = 0.02,
+                      do_return_all_layers: bool = False) -> List[tf.Tensor]:
     """Multi-headed, multi-layer Transformer from "Attention is All You Need".
 
     This is almost an exact implementation of the original Transformer encoder.
@@ -774,7 +778,7 @@ def transformer_model(input_tensor,
         return final_output
 
 
-def get_shape_list(tensor, expected_rank=None, name=None):
+def get_shape_list(tensor: tf.Tensor, expected_rank: Optional[int] = None, name: Optional[str] = None) -> List[Optional[int]]:
     """Returns a list of the shape of tensor, preferring static dimensions.
 
     Args:
@@ -811,7 +815,7 @@ def get_shape_list(tensor, expected_rank=None, name=None):
     return shape
 
 
-def reshape_to_matrix(input_tensor):
+def reshape_to_matrix(input_tensor: tf.Tensor) -> tf.Tensor:
     """Reshapes a >= rank 2 tensor to a rank 2 tensor (i.e., a matrix)."""
     ndims = input_tensor.shape.ndims
     if ndims < 2:
@@ -824,7 +828,7 @@ def reshape_to_matrix(input_tensor):
     return output_tensor
 
 
-def reshape_from_matrix(output_tensor, orig_shape_list):
+def reshape_from_matrix(output_tensor: tf.Tensor, orig_shape_list: List[Optional[int]]) -> tf.Tensor:
     """Reshapes a rank 2 tensor back to its original rank >= 2 tensor."""
     if len(orig_shape_list) == 2:
         return output_tensor
@@ -837,7 +841,7 @@ def reshape_from_matrix(output_tensor, orig_shape_list):
     return tf.reshape(output_tensor, orig_dims + [width])
 
 
-def assert_rank(tensor, expected_rank, name=None):
+def assert_rank(tensor: tf.Tensor, expected_rank: Optional[int], name: Optional[str] = None):
     """Raises an exception if the tensor rank is not of the expected rank.
 
     Args:
