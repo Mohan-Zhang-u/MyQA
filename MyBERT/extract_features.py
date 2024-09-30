@@ -22,7 +22,7 @@ import codecs
 import collections
 import json
 import re
-from typing import Self
+from typing import Self, LiteralString
 
 import modeling
 import tokenization
@@ -80,7 +80,7 @@ flags.DEFINE_bool(
 
 
 class InputExample:
-    def __init__(self, unique_id: int, text_a: str, text_b: str):
+    def __init__(self, unique_id: int, text_a: LiteralString, text_b: LiteralString):
         self.unique_id = unique_id
         self.text_a = text_a
         self.text_b = text_b
@@ -324,7 +324,7 @@ def _truncate_seq_pair(tokens_a: list[str], tokens_b: list[str], max_length: int
             tokens_b.pop()
 
 
-def read_examples(input_file: str):
+def read_examples(input_file: LiteralString):
     """Read a list of `InputExample`s from an input file."""
     examples = []
     unique_id = 0
