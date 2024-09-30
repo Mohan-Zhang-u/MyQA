@@ -32,10 +32,11 @@ except* Exception as e:
 
 # Example of using the Self type for accurate type hints in class methods
 from typing import Self, LiteralString
+from dataclasses import dataclass
 
+@dataclass
 class ExampleClass:
-    def __init__(self, value: int):
-        self.value = value
+    value: int
 
     def increment(self) -> Self:
         self.value += 1
