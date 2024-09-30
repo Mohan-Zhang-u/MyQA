@@ -20,7 +20,7 @@ from __future__ import print_function
 
 import re
 import tensorflow as tf
-from typing import TypeVar, Generic, List, Tuple
+from typing import TypeVar, Generic, List, Tuple, Self
 
 Ts = TypeVar('Ts')
 
@@ -175,3 +175,15 @@ class AdamWeightDecayOptimizer(tf.compat.v1.train.Optimizer, Generic[Ts]):
         if m is not None:
             param_name = m.group(1)
         return param_name
+
+    def clone(self) -> Self:
+        """Create a clone of this optimizer."""
+        return AdamWeightDecayOptimizer(
+            learning_rate=self.learning_rate,
+            weight_decay_rate=self.weight_decay_rate,
+            beta_1=self.beta_1,
+            beta_2=self.beta_2,
+            epsilon=self.epsilon,
+            exclude_from_weight_decay=self.exclude_from_weight_decay,
+            name=self._name
+        )
