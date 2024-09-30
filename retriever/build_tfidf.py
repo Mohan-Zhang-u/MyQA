@@ -48,12 +48,20 @@ def init(tokenizer_class, db_class, db_opts):
 
 def fetch_text(doc_id):
     global PROCESS_DB
-    return PROCESS_DB.get_doc_text(doc_id)
+    try:
+        return PROCESS_DB.get_doc_text(doc_id)
+    except Exception as e:
+        e.add_note(f"Error fetching text for document ID: {doc_id}")
+        raise
 
 
 def tokenize(text):
     global PROCESS_TOK
-    return PROCESS_TOK.tokenize(text)
+    try:
+        return PROCESS_TOK.tokenize(text)
+    except Exception as e:
+        e.add_note("Error during tokenization")
+        raise
 
 
 # ------------------------------------------------------------------------------
@@ -65,21 +73,25 @@ def count(ngram, hash_size, doc_id):
     """Fetch the text of a document and compute hashed ngrams counts."""
     global DOC2IDX
     row, col, data = [], [], []
-    # Tokenize
-    tokens = tokenize(retriever.utils.normalize(fetch_text(doc_id)))
+    try:
+        # Tokenize
+        tokens = tokenize(retriever.utils.normalize(fetch_text(doc_id)))
 
-    # Get ngrams from tokens, with stopword/punctuation filtering.
-    ngrams = tokens.ngrams(
-        n=ngram, uncased=True, filter_fn=retriever.utils.filter_ngram
-    )
+        # Get ngrams from tokens, with stopword/punctuation filtering.
+        ngrams = tokens.ngrams(
+            n=ngram, uncased=True, filter_fn=retriever.utils.filter_ngram
+        )
 
-    # Hash ngrams and count occurrences
-    counts = Counter([retriever.utils.hash(gram, hash_size) for gram in ngrams])
+        # Hash ngrams and count occurrences
+        counts = Counter([retriever.utils.hash(gram, hash_size) for gram in ngrams])
 
-    # Return in sparse matrix data format.
-    row.extend(counts.keys())
-    col.extend([DOC2IDX[doc_id]] * len(counts))
-    data.extend(counts.values())
+        # Return in sparse matrix data format.
+        row.extend(counts.keys())
+        col.extend([DOC2IDX[doc_id]] * len(counts))
+        data.extend(counts.values())
+    except Exception as e:
+        e.add_note(f"Error processing document ID: {doc_id}")
+        raise
     return row, col, data
 
 
@@ -139,19 +151,27 @@ def get_tfidf_matrix(cnts):
     * N = number of documents
     * Nt = number of occurrences of term in all documents
     """
-    Ns = get_doc_freqs(cnts)
-    idfs = np.log((cnts.shape[1] - Ns + 0.5) / (Ns + 0.5))
-    idfs[idfs < 0] = 0
-    idfs = sp.diags(idfs, 0)
-    tfs = cnts.log1p()
-    tfidfs = idfs.dot(tfs)
+    try:
+        Ns = get_doc_freqs(cnts)
+        idfs = np.log((cnts.shape[1] - Ns + 0.5) / (Ns + 0.5))
+        idfs[idfs < 0] = 0
+        idfs = sp.diags(idfs, 0)
+        tfs = cnts.log1p()
+        tfidfs = idfs.dot(tfs)
+    except Exception as e:
+        e.add_note("Error computing TF-IDF matrix")
+        raise
     return tfidfs
 
 
 def get_doc_freqs(cnts):
     """Return word --> # of docs it appears in."""
-    binary = (cnts > 0).astype(int)
-    freqs = np.array(binary.sum(1)).squeeze()
+    try:
+        binary = (cnts > 0).astype(int)
+        freqs = np.array(binary.sum(1)).squeeze()
+    except Exception as e:
+        e.add_note("Error computing document frequencies")
+        raise
     return freqs
 
 
