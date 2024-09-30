@@ -4,7 +4,7 @@ import math
 import re
 import tensorflow as tf
 import six
-from typing import TypeVar, Generic, List, Tuple, Optional, Type
+from typing import TypeVar, Generic, List, Tuple, Optional, Type, LiteralString
 
 # Define variadic generics
 T = TypeVar('T')
@@ -169,7 +169,7 @@ def gelu(input_tensor: tf.Tensor) -> tf.Tensor:
     return input_tensor * cdf
 
 
-def get_activation(activation_string: Optional[str]) -> Optional[callable]:
+def get_activation(activation_string: Optional[LiteralString]) -> Optional[callable]:
     """Maps a string to a Python function, e.g., "relu" => `tf.nn.relu`.
 
     Args:
