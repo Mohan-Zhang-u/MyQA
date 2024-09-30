@@ -12,7 +12,8 @@ import argparse
 import os
 import math
 import logging
-from typing import LiteralString
+from typing import LiteralString, List, Tuple, Dict
+from dataclasses import dataclass
 
 from multiprocessing import Pool as ProcessPool
 from multiprocessing.util import Finalize
@@ -56,7 +57,7 @@ def fetch_text(doc_id: str) -> str:
         raise
 
 
-def tokenize(text: str) -> list[str]:
+def tokenize(text: str) -> List[str]:
     global PROCESS_TOK
     try:
         return PROCESS_TOK.tokenize(text)
@@ -70,7 +71,7 @@ def tokenize(text: str) -> list[str]:
 # ------------------------------------------------------------------------------
 
 
-def count(ngram: int, hash_size: int, doc_id: str) -> tuple[list[int], list[int], list[int]]:
+def count(ngram: int, hash_size: int, doc_id: str) -> Tuple[List[int], List[int], List[int]]:
     """Fetch the text of a document and compute hashed ngrams counts."""
     global DOC2IDX
     row, col, data = [], [], []
@@ -96,7 +97,7 @@ def count(ngram: int, hash_size: int, doc_id: str) -> tuple[list[int], list[int]
     return row, col, data
 
 
-def get_count_matrix(args: argparse.Namespace, db: LiteralString, db_opts: dict) -> tuple[sp.csr_matrix, tuple[dict[str, int], list[str]]]:
+def get_count_matrix(args: argparse.Namespace, db: LiteralString, db_opts: dict) -> Tuple[sp.csr_matrix, Tuple[Dict[str, int], List[str]]]:
     """Form a sparse word to document count matrix (inverted index).
 
     M[i, j] = # times word i appears in document j.
