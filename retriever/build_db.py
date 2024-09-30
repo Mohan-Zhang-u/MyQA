@@ -12,7 +12,7 @@ import json
 import os
 import logging
 import importlib.util
-from typing import TypeVar, Tuple, List
+from typing import TypeVar, Tuple, List, Self
 
 from multiprocessing import Pool as ProcessPool
 from tqdm import tqdm
