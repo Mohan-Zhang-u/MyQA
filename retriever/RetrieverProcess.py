@@ -15,9 +15,15 @@ if __name__ == "__main__":
     parser.add_argument('k', type=int, help='the maximum number of documents to be retrieved')
     parser.add_argument('retrieved_json_path', type=str, help='/path/to/retrieved_json.json')
     args = parser.parse_args()
-    doc_names, doc_scores = process(args.tfidf_model_path, args.question, args.k)
-    my_dict = {}
-    my_dict["doc_names"] = doc_names
-    my_dict["doc_scores"] = doc_scores.tolist()
-    with codecs.open(args.retrieved_json_path, 'w', encoding='utf-8') as fp:
-        json.dump(my_dict, fp)
+    try:
+        doc_names, doc_scores = process(args.tfidf_model_path, args.question, args.k)
+        my_dict = {}
+        my_dict["doc_names"] = doc_names
+        my_dict["doc_scores"] = doc_scores.tolist()
+        with codecs.open(args.retrieved_json_path, 'w', encoding='utf-8') as fp:
+            json.dump(my_dict, fp)
+    except Exception as e:
+        # Provide fine-grained error locations in tracebacks
+        import traceback
+        tb_str = ''.join(traceback.format_exception(e))
+        print(f"An error occurred: {e}\nTraceback:\n{tb_str}")
