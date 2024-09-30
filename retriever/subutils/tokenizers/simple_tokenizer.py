@@ -10,7 +10,7 @@ non-whitespace tokens.
 
 import regex
 import logging
-from typing import Self
+from typing import Self, LiteralString
 from .tokenizer import Tokens, Tokenizer
 
 logger = logging.getLogger(__name__)
@@ -34,7 +34,7 @@ class SimpleTokenizer(Tokenizer):
                            (type(self).__name__, kwargs.get('annotators')))
         self.annotators = set()
 
-    def tokenize(self, text: str) -> Tokens:
+    def tokenize(self, text: LiteralString) -> Tokens:
         data = []
         matches = [m for m in self._regexp.finditer(text)]
         for i in range(len(matches)):
