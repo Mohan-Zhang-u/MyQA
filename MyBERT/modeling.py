@@ -4,7 +4,7 @@ import math
 import re
 import tensorflow as tf
 import six
-from typing import TypeVar, Generic, List, Tuple, Optional, Type, LiteralString
+from typing import TypeVar, Generic, List, Tuple, Optional, Type, Callable
 
 # Define variadic generics
 T = TypeVar('T')
@@ -169,7 +169,7 @@ def gelu(input_tensor: tf.Tensor) -> tf.Tensor:
     return input_tensor * cdf
 
 
-def get_activation(activation_string: Optional[LiteralString]) -> Optional[callable]:
+def get_activation(activation_string: Optional[str]) -> Optional[Callable]:
     """Maps a string to a Python function, e.g., "relu" => `tf.nn.relu`.
 
     Args:
@@ -454,9 +454,9 @@ def attention_layer(from_tensor: tf.Tensor,
                     attention_mask: Optional[tf.Tensor] = None,
                     num_attention_heads: int = 1,
                     size_per_head: int = 512,
-                    query_act: Optional[callable] = None,
-                    key_act: Optional[callable] = None,
-                    value_act: Optional[callable] = None,
+                    query_act: Optional[Callable] = None,
+                    key_act: Optional[Callable] = None,
+                    value_act: Optional[Callable] = None,
                     attention_probs_dropout_prob: float = 0.0,
                     initializer_range: float = 0.02,
                     do_return_2d_tensor: bool = False,
@@ -651,7 +651,7 @@ def transformer_model(input_tensor: tf.Tensor,
                       num_hidden_layers: int = 12,
                       num_attention_heads: int = 12,
                       intermediate_size: int = 3072,
-                      intermediate_act_fn: callable = gelu,
+                      intermediate_act_fn: Callable = gelu,
                       hidden_dropout_prob: float = 0.1,
                       attention_probs_dropout_prob: float = 0.1,
                       initializer_range: float = 0.02,
