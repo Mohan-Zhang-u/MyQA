@@ -9,7 +9,7 @@ import json
 import codecs
 import os
 import argparse
-from typing import TypeVar
+from typing import TypeVar, Self
 
 # Define a variadic generic for functions that accept multiple types
 Ts = TypeVar('Ts')
