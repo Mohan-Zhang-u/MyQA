@@ -2,6 +2,7 @@
 
 import os
 from typing import TypeVar, Generic, Self, LiteralString
+from dataclasses import dataclass
 
 DATA_DIR = 'mydata'
 
@@ -19,6 +20,7 @@ def set_default(key: LiteralString, value: str) -> None:
 
 T = TypeVar('T', bound='RetrieverBase')
 
+@dataclass
 class RetrieverBase(Generic[T]):
     def get_instance(self) -> Self:
         return self
