@@ -62,4 +62,5 @@ class SimpleTokenizer(Tokenizer):
             # Some code that might raise multiple exceptions
             pass
         except* (ValueError, TypeError) as e:
+            e.add_note("Caught an exception group in example_method.")
             logger.error("Caught an exception group: %s", e)
