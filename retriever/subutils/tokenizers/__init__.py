@@ -38,7 +38,9 @@ def get_class(name):
     if name == 'simple':
         return SimpleTokenizer
 
-    raise RuntimeError(f'Invalid tokenizer: {name}')
+    error = RuntimeError(f'Invalid tokenizer: {name}')
+    error.add_note("Ensure the tokenizer name is one of 'spacy', 'corenlp', 'regexp', or 'simple'.")
+    raise error
 
 
 def get_annotators_for_args(args):
