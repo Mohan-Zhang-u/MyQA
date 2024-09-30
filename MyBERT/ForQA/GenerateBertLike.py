@@ -1,6 +1,6 @@
 import json
 import codecs
-from typing import List, LiteralString
+from typing import List, Literal
 
 # The structure looks like this:
 # SQuAD:https://rajpurkar.github.io/SQuAD-explorer/
@@ -22,7 +22,7 @@ from typing import List, LiteralString
 # │       └── "title": "document id"
 # └── "version": 1.1
 
-def get_paragraph(filename: LiteralString) -> str:
+def get_paragraph(filename: Literal['imperial_short.txt', 'imperial_long.txt', 'beeshort.txt', 'bee.txt']) -> str:
     try:
         with codecs.open('Paragraphs/' + filename, 'r', encoding='utf8') as fp:
             paragraph = fp.read()
@@ -36,7 +36,7 @@ def get_paragraph(filename: LiteralString) -> str:
         print(e)
         return ""
 
-def generate_multi_test_cases(list_of_paragraphs: List[str], list_of_questions: List[str], name_of_file: LiteralString) -> None:
+def generate_multi_test_cases(list_of_paragraphs: List[str], list_of_questions: List[str], name_of_file: Literal['imperial_short', 'imperial_long', 'beeshort', 'bee']) -> None:
     assert len(list_of_paragraphs) == len(list_of_questions)
     length_of_them = len(list_of_paragraphs)
 
