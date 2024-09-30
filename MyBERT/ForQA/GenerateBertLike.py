@@ -30,8 +30,9 @@ def get_paragraph(filename):
             paragraph = paragraph.replace('\'', '\\\'')
             paragraph = paragraph.replace('\"', '\\\"')
             return paragraph
-    except* (FileNotFoundError, IOError) as e:
-        print(f"Error reading file {filename}: {e}")
+    except (FileNotFoundError, IOError) as e:
+        e.add_note(f"Error reading file {filename}. Ensure the file exists and is accessible.")
+        print(e)
         return ""
 
 def generate_multi_test_cases(list_of_paragraphs, list_of_questions, name_of_file):
@@ -54,8 +55,9 @@ def generate_multi_test_cases(list_of_paragraphs, list_of_questions, name_of_fil
     try:
         with open('Data/' + name_of_file + '.json', 'w', encoding='utf8') as fp:
             json.dump(jsondict, fp, ensure_ascii=False, indent=4)
-    except* (FileNotFoundError, IOError) as e:
-        print(f"Error writing file {name_of_file}.json: {e}")
+    except (FileNotFoundError, IOError) as e:
+        e.add_note(f"Error writing file {name_of_file}.json. Check if the directory exists and is writable.")
+        print(e)
 
 if __name__ == "__main__":
     list_of_paragraphs = []
