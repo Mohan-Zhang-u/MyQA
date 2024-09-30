@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import os
-from typing import TypeVar, Generic
+from typing import TypeVar, Generic, Self
 
 DATA_DIR = 'mydata'
 
@@ -20,7 +20,8 @@ def set_default(key: str, value: str) -> None:
 T = TypeVar('T', bound='RetrieverBase')
 
 class RetrieverBase(Generic[T]):
-    pass
+    def get_instance(self) -> Self:
+        return self
 
 def get_class(name: str) -> T:
     if name == 'tfidf':
