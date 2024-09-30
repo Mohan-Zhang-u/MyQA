@@ -135,7 +135,7 @@ def main(arguments):
 if __name__ == '__main__':
     try:
         sys.exit(main(sys.argv[1:]))
-    except Exception as e:
+    except* Exception as e:
         import traceback
         tb_str = ''.join(traceback.format_exception(e))
         print(f"An error occurred: {e}\nTraceback:\n{tb_str}")
