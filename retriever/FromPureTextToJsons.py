@@ -12,12 +12,15 @@ import argparse
 
 def CreateJsonFile(datafile_path, json_path):
     for filename in os.listdir(datafile_path):
-        with codecs.open(os.path.join(datafile_path, filename), 'r', encoding='utf8') as fp:
+        file_path = os.path.join(datafile_path, filename)
+        with codecs.open(file_path, 'r', encoding='utf8') as fp:
             text = fp.read()
-            dictionary = {}
-            dictionary['id'] = filename
-            dictionary['text'] = text
-            with codecs.open(os.path.join(json_path, filename), 'w', encoding='utf8') as fpw:
+            dictionary = {
+                'id': filename,
+                'text': text
+            }
+            json_file_path = os.path.join(json_path, filename)
+            with codecs.open(json_file_path, 'w', encoding='utf8') as fpw:
                 json.dump(dictionary, fpw, ensure_ascii=False)
 
 if __name__ == "__main__":
