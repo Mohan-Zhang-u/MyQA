@@ -60,7 +60,7 @@ class RegexpTokenizer(Tokenizer):
         self.annotators = set()
         self.substitutions = kwargs.get('substitutions', True)
 
-    def tokenize(self, text):
+    def tokenize(self, text: str) -> Tokens:
         data = []
         try:
             matches = [m for m in self._regexp.finditer(text)]
